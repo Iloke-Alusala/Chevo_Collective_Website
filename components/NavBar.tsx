@@ -2,33 +2,22 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Navbar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [hash, setHash] = useState("");
   const mobileMenuId = "site-navigation-mobile";
 
-  useEffect(() => {
-    const syncHash = () => setHash(window.location.hash);
-
-    syncHash();
-    window.addEventListener("hashchange", syncHash);
-
-    return () => window.removeEventListener("hashchange", syncHash);
-  }, [pathname]);
-
-  const isHome = pathname === "/" && hash !== "#about";
-  const isEvents = pathname === "/events";
-  const isAbout = pathname === "/" && hash === "#about";
+  const isHome = pathname === "/";
+  const isEvents = pathname === "/events" || pathname.startsWith("/events/");
 
   function closeMobileMenu() {
     setMobileOpen(false);
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/70 backdrop-blur-md shadow-[0_20px_40px_0_rgba(26,28,29,0.06)]">
+    <nav className="glass-panel sticky top-0 z-50 border-b border-white/60 bg-white/70 shadow-[0_20px_40px_0_rgba(26,28,29,0.06)]">
       <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between px-6 lg:px-8">
         <Link
           href="/"
@@ -62,17 +51,6 @@ export default function Navbar() {
             }`}
           >
             Events
-          </Link>
-          <Link
-            href="/#about"
-            aria-current={isAbout ? "location" : undefined}
-            className={`text-sm font-bold uppercase tracking-tight transition-colors ${
-              isAbout
-                ? "border-b-2 border-chevo-logo-orange pb-px text-chevo-logo-orange"
-                : "text-chevo-slate hover:text-chevo-dark"
-            }`}
-          >
-            About
           </Link>
         </div>
 
@@ -127,7 +105,7 @@ export default function Navbar() {
       <div
         id={mobileMenuId}
         aria-hidden={!mobileOpen}
-        className={`overflow-hidden border-t border-chevo-gray bg-white transition-[max-height,opacity,transform] duration-[420ms] ease-[var(--ease-emphasized)] md:hidden ${
+        className={`overflow-hidden border-t border-white/60 bg-white/35 transition-[max-height,opacity,transform] duration-[420ms] ease-[var(--ease-emphasized)] md:hidden ${
           mobileOpen
             ? "max-h-80 translate-y-0 opacity-100"
             : "pointer-events-none max-h-0 -translate-y-2 opacity-0"
@@ -155,17 +133,6 @@ export default function Navbar() {
             }`}
           >
             Events
-          </Link>
-          <Link
-            href="/#about"
-            onClick={closeMobileMenu}
-            aria-current={isAbout ? "location" : undefined}
-            tabIndex={mobileOpen ? 0 : -1}
-            className={`text-sm font-bold uppercase tracking-tight ${
-              isAbout ? "text-chevo-logo-orange" : "text-chevo-slate"
-            }`}
-          >
-            About
           </Link>
           <Link
             href="/events"

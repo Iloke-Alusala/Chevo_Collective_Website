@@ -22,7 +22,7 @@ export default function LeaderboardTable() {
   }
 
   return (
-    <div className="overflow-x-auto rounded-2xl border border-chevo-gray bg-white shadow-[0_20px_40px_0_rgba(26,28,29,0.04)]">
+    <div className="glass-panel overflow-x-auto rounded-[28px] shadow-[0_20px_40px_0_rgba(26,28,29,0.04)]">
       <table className="min-w-full text-sm">
         <thead className="bg-chevo-surface">
           <tr className="text-left">

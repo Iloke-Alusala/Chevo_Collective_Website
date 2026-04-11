@@ -2,8 +2,8 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-chevo-footer-bg">
-      <div className="mx-auto flex max-w-[1280px] flex-col items-start justify-between gap-6 px-6 py-12 sm:flex-row sm:items-center lg:px-8">
+    <footer className="bg-transparent px-6 pb-10 lg:px-8">
+      <div className="glass-panel mx-auto flex max-w-[1280px] flex-col items-start justify-between gap-6 rounded-[28px] px-6 py-8 sm:flex-row sm:items-center">
         <div className="flex flex-col gap-2">
           <span className="text-lg leading-7 font-bold text-[#0F172A]">
             Chevo Collective
@@ -14,12 +14,6 @@ export default function Footer() {
         </div>
 
         <div className="flex items-center gap-6 sm:gap-8">
-          <Link
-            href="/#about"
-            className="interactive-link text-xs uppercase tracking-[1.2px] text-chevo-muted-text hover:text-chevo-dark"
-          >
-            About
-          </Link>
           <Link
             href="/events"
             className="interactive-link text-xs uppercase tracking-[1.2px] text-chevo-muted-text hover:text-chevo-dark"
