@@ -109,7 +109,7 @@ button:focus-visible {
 }
 
 .glass-chip {
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(247, 247, 247, 0.72);
   border: 1px solid rgba(255, 255, 255, 0.74);
   box-shadow:
     8px 8px 16px rgba(212, 217, 227, 0.18),
@@ -124,6 +124,36 @@ button:focus-visible {
   box-shadow:
     inset 8px 8px 16px rgba(220, 225, 233, 0.2),
     inset -6px -6px 14px rgba(255, 255, 255, 0.92);
+}
+
+.glass-button {
+  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow:
+    14px 14px 28px rgba(211, 216, 225, 0.22),
+    -8px -8px 18px rgba(255, 255, 255, 0.9),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.glass-dropdown-panel {
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.82);
+  box-shadow:
+    18px 18px 36px rgba(209, 214, 224, 0.24),
+    -10px -10px 22px rgba(255, 255, 255, 0.92),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-dropdown-option {
+  transition:
+    background-color var(--duration-base) var(--ease-standard),
+    color var(--duration-base) var(--ease-standard),
+    transform var(--duration-base) var(--ease-gentle),
+    box-shadow var(--duration-base) var(--ease-gentle);
 }
 
 .glass-input::placeholder {
@@ -288,6 +318,19 @@ button:focus-visible {
   .interactive-button:hover::after {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+
+  .glass-button:hover {
+    box-shadow:
+      16px 16px 30px rgba(211, 216, 225, 0.24),
+      -10px -10px 20px rgba(255, 255, 255, 0.94),
+      inset 1px 1px 0 rgba(255, 255, 255, 0.82);
+  }
+
+  .glass-dropdown-option:hover {
+    background: rgba(255, 255, 255, 0.72);
+    transform: translateY(-1px);
+    box-shadow: 0 16px 28px -24px rgba(26, 28, 29, 0.26);
   }
 
   .interactive-link:hover svg {

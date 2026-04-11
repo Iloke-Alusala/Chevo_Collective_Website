@@ -1,4 +1,5 @@
 export type EventStatus = "upcoming" | "past";
+export type EventCapacityStatus = "high" | "medium";
 
 export type EventItem = {
   id: string;
@@ -9,7 +10,9 @@ export type EventItem = {
   dateLabel: string;
   timeLabel: string;
   location: string;
+  locationMapValue: string;
   capacityLabel: string;
+  capacityStatus: EventCapacityStatus;
   ctaLabel: string;
   ctaHref: string;
   imageUrl: string;
@@ -28,8 +31,40 @@ export function getEventAnchorPath(eventId: string) {
   return `/events#${eventId}`;
 }
 
+export function getGoogleMapsHref(value?: string) {
+  const trimmedValue = value?.trim() || "";
+
+  if (!trimmedValue) {
+    return "";
+  }
+
+  if (/^https?:\/\//i.test(trimmedValue)) {
+    return trimmedValue;
+  }
+
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(trimmedValue)}`;
+}
+
 export function getDefaultCtaLabel(status: EventStatus) {
   return status === "past" ? "View Details" : "RSVP Now";
+}
+
+function normalizeCapacityStatus(value?: string): EventCapacityStatus {
+  return value?.trim().toLowerCase() === "medium" ? "medium" : "high";
+}
+
+function normalizeCategory(value?: string) {
+  const normalizedValue = value?.trim().toLowerCase() || "";
+
+  if (normalizedValue === "social") {
+    return "Social";
+  }
+
+  if (normalizedValue === "talk" || normalizedValue === "talks") {
+    return "Talk";
+  }
+
+  return "Workshop";
 }
 
 export function createEventId() {
@@ -52,7 +87,9 @@ export function createEmptyEvent(): EventItem {
     dateLabel: "",
     timeLabel: "",
     location: "",
+    locationMapValue: "",
     capacityLabel: "",
+    capacityStatus: "high",
     ctaLabel: getDefaultCtaLabel("upcoming"),
     ctaHref: getEventPagePath(id),
     imageUrl:
@@ -73,7 +110,9 @@ export const defaultEvents: EventItem[] = [
     dateLabel: "June 1",
     timeLabel: "18:00 - 20:00",
     location: "Snape LT1",
+    locationMapValue: "Snape LT1 UCT Cape Town",
     capacityLabel: "40 seats",
+    capacityStatus: "high",
     ctaLabel: "RSVP Now",
     ctaHref: getEventPagePath("ai-agent-workshop"),
     imageUrl:
@@ -91,7 +130,9 @@ export const defaultEvents: EventItem[] = [
     dateLabel: "April 25",
     timeLabel: "17:30 - 19:00",
     location: "Plato Coffee",
+    locationMapValue: "Plato Coffee UCT Cape Town",
     capacityLabel: "Open drop-in",
+    capacityStatus: "high",
     ctaLabel: "RSVP Now",
     ctaHref: getEventPagePath("coffee-chat"),
     imageUrl:
@@ -104,12 +145,14 @@ export const defaultEvents: EventItem[] = [
     title: "Build Night Kickoff",
     description:
       "A fast-paced evening to form teams, scope project ideas, and choose a build track before the first sprint officially opens.",
-    category: "Build Night",
+    category: "Workshop",
     organizer: "Chevo",
     dateLabel: "May 14",
     timeLabel: "18:30 - 21:00",
     location: "Menzies Workshop",
+    locationMapValue: "Menzies Workshop UCT Cape Town",
     capacityLabel: "24 seats",
+    capacityStatus: "medium",
     ctaLabel: "RSVP Now",
     ctaHref: getEventPagePath("build-night-kickoff"),
     imageUrl:
@@ -127,7 +170,9 @@ export const defaultEvents: EventItem[] = [
     dateLabel: "March 12",
     timeLabel: "18:00 - 19:30",
     location: "Mechanical Labs",
+    locationMapValue: "Mechanical Labs UCT Cape Town",
     capacityLabel: "Recorded session",
+    capacityStatus: "high",
     ctaLabel: "View Details",
     ctaHref: getEventPagePath("rover-retrospective"),
     imageUrl:
@@ -146,12 +191,15 @@ export function normalizeEvent(event: Partial<EventItem>, index = 0): EventItem 
     id,
     title: event.title?.trim() || fallback.title,
     description: event.description?.trim() || fallback.description,
-    category: event.category?.trim() || fallback.category,
+    category: normalizeCategory(event.category || fallback.category),
     organizer: event.organizer?.trim() || fallback.organizer,
     dateLabel: event.dateLabel?.trim() || fallback.dateLabel,
     timeLabel: event.timeLabel?.trim() || fallback.timeLabel,
     location: event.location?.trim() || fallback.location,
+    locationMapValue:
+      event.locationMapValue?.trim() || event.location?.trim() || fallback.locationMapValue,
     capacityLabel: event.capacityLabel?.trim() || fallback.capacityLabel,
+    capacityStatus: normalizeCapacityStatus(event.capacityStatus || fallback.capacityStatus),
     ctaLabel: getDefaultCtaLabel(status),
     ctaHref: getEventPagePath(id),
     imageUrl: event.imageUrl?.trim() || fallback.imageUrl,

@@ -1,6 +1,10 @@
 import Link from "next/link";
 import SmartImage from "@/components/SmartImage";
-import { getEventPagePath, type EventItem } from "@/lib/events";
+import {
+  getEventPagePath,
+  getGoogleMapsHref,
+  type EventItem,
+} from "@/lib/events";
 
 type EventCardProps = {
   event: EventItem;
@@ -25,6 +29,7 @@ export default function EventCard({
   className = "",
 }: EventCardProps) {
   const isFeatured = variant === "featured";
+  const locationHref = getGoogleMapsHref(event.locationMapValue);
   const tagItems = [
     { label: event.category, tone: "category" },
     { label: event.organizer, tone: "organizer" },
@@ -34,7 +39,7 @@ export default function EventCard({
     { label: "Date", value: event.dateLabel },
     { label: "Time", value: event.timeLabel },
     { label: "Capacity", value: event.capacityLabel },
-    { label: "Location", value: event.location },
+    { label: "Location", value: event.location, href: locationHref },
   ].filter((item) => item.value);
 
   return (
@@ -64,9 +69,9 @@ export default function EventCard({
             {tagItems.map((item) => (
               <span
                 key={`${event.id}-${item.label}`}
-                className={`event-chip-fan__chip glass-chip rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[1px] ${
+                className={`event-chip-fan__chip bg-black glass-chip rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[1px] ${
                   item.tone === "category"
-                    ? "text-[#640600]"
+                    ? "text-[#ff8d85]"
                     : item.tone === "organizer"
                       ? "text-chevo-dark"
                       : "text-chevo-slate"
@@ -103,9 +108,22 @@ export default function EventCard({
                   <p className="text-[10px] font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
                     {item.label}
                   </p>
-                  <p className="mt-2 text-base leading-7 font-semibold text-chevo-dark">
-                    {item.value}
-                  </p>
+                  <div className="mt-2 flex items-center gap-2">
+                    <p className="text-base leading-7 font-semibold text-chevo-dark">
+                      {item.value}
+                    </p>
+                    {item.label === "Location" && item.href ? (
+                      <a
+                        href={item.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={`Open ${event.location} in Google Maps`}
+                        className="interactive-link inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-base"
+                      >
+                        📍
+                      </a>
+                    ) : null}
+                  </div>
                 </div>
               ))
             : null}

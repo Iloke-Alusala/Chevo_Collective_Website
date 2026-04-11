@@ -1,23 +1,57 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import EventCard from "@/components/EventCard";
 import Reveal from "@/components/Reveal";
 import SmartImage from "@/components/SmartImage";
 import { useLocalEvents } from "@/components/useLocalEvents";
 import { defaultEvents, type EventStatus } from "@/lib/events";
 
+const tagOptions = [
+  { value: "all", label: "All tags" },
+  { value: "workshop", label: "Workshop" },
+  { value: "social", label: "Social" },
+  { value: "talks", label: "Talks" },
+] as const;
+
 export default function EventsPage() {
   const [activeTab, setActiveTab] = useState<EventStatus>("upcoming");
   const [activeTag, setActiveTag] = useState("all");
+  const [isTagMenuOpen, setIsTagMenuOpen] = useState(false);
+  const tagMenuRef = useRef<HTMLDivElement | null>(null);
   const { events, isReady } = useLocalEvents();
   const sourceEvents = isReady ? events : defaultEvents;
-  const tagOptions = [
-    { value: "all", label: "All tags" },
-    { value: "workshop", label: "Workshop" },
-    { value: "social", label: "Social" },
-    { value: "talks", label: "Talks" },
-  ] as const;
+  const selectedTagLabel =
+    tagOptions.find((option) => option.value === activeTag)?.label ?? "All tags";
+
+  useEffect(() => {
+    if (!isTagMenuOpen) {
+      return;
+    }
+
+    function handlePointerDown(event: MouseEvent) {
+      if (
+        tagMenuRef.current &&
+        !tagMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsTagMenuOpen(false);
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsTagMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isTagMenuOpen]);
 
   const upcomingEvents = useMemo(
     () =>
@@ -139,22 +173,60 @@ export default function EventsPage() {
             <span className="text-[11px] font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
               Filter by tag
             </span>
-            <div className="glass-inset relative min-w-[220px] rounded-[22px] px-4 py-3">
-              <select
-                value={activeTag}
-                onChange={(event) => setActiveTag(event.target.value)}
-                className="w-full appearance-none bg-transparent pr-8 text-sm font-bold uppercase tracking-[1.2px] text-chevo-dark outline-none"
+            <div ref={tagMenuRef} className="relative min-w-[220px]">
+              <button
+                type="button"
+                aria-expanded={isTagMenuOpen}
+                aria-haspopup="listbox"
                 aria-label="Filter events by tag"
+                onClick={() => setIsTagMenuOpen((current) => !current)}
+                className="glass-button interactive-button flex w-full items-center justify-between gap-4 rounded-[22px] px-4 py-3 text-left"
               >
-                {tagOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <span className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-chevo-muted-text">
-                ▼
-              </span>
+                <span className="text-sm font-bold uppercase tracking-[1.2px] text-chevo-dark">
+                  {selectedTagLabel}
+                </span>
+                <span
+                  className={`pointer-events-none text-xs text-chevo-muted-text transition-transform duration-300 ${
+                    isTagMenuOpen ? "rotate-180" : ""
+                  }`}
+                >
+                  ▼
+                </span>
+              </button>
+
+              {isTagMenuOpen ? (
+                <div className="glass-dropdown-panel absolute top-[calc(100%+0.75rem)] right-0 z-30 min-w-full rounded-[24px] p-2">
+                  <ul role="listbox" aria-label="Event tags" className="space-y-1">
+                    {tagOptions.map((option) => {
+                      const isActive = option.value === activeTag;
+
+                      return (
+                        <li key={option.value}>
+                          <button
+                            type="button"
+                            role="option"
+                            aria-selected={isActive}
+                            onClick={() => {
+                              setActiveTag(option.value);
+                              setIsTagMenuOpen(false);
+                            }}
+                            className={`glass-dropdown-option interactive-button flex w-full items-center justify-between rounded-[18px] px-4 py-3 text-sm font-bold uppercase tracking-[1.15px] ${
+                              isActive
+                                ? "bg-[rgba(255,255,255,0.92)] text-chevo-dark shadow-[0_14px_24px_-20px_rgba(26,28,29,0.3)]"
+                                : "text-chevo-text-muted"
+                            }`}
+                          >
+                            <span>{option.label}</span>
+                            {isActive ? (
+                              <span className="text-chevo-orange">•</span>
+                            ) : null}
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>

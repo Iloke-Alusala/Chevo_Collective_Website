@@ -10,7 +10,9 @@ export default function Navbar() {
   const mobileMenuId = "site-navigation-mobile";
 
   const isHome = pathname === "/";
-  const isEvents = pathname === "/events" || pathname.startsWith("/events/");
+  const isEvents = pathname === "/events";
+  const isRsvp = pathname.startsWith("/events/");
+  const rsvpHref = isRsvp ? pathname : "/events";
 
   function closeMobileMenu() {
     setMobileOpen(false);
@@ -52,6 +54,15 @@ export default function Navbar() {
           >
             Events
           </Link>
+          {isRsvp ? (
+            <Link
+              href={rsvpHref}
+              aria-current="page"
+              className="border-b-2 border-chevo-logo-orange pb-px text-sm font-bold uppercase tracking-tight text-chevo-logo-orange transition-colors"
+            >
+              RSVP
+            </Link>
+          ) : null}
         </div>
 
         <div className="hidden md:block">
@@ -134,6 +145,17 @@ export default function Navbar() {
           >
             Events
           </Link>
+          {isRsvp ? (
+            <Link
+              href={rsvpHref}
+              onClick={closeMobileMenu}
+              aria-current="page"
+              tabIndex={mobileOpen ? 0 : -1}
+              className="text-sm font-bold uppercase tracking-tight text-chevo-logo-orange"
+            >
+              RSVP
+            </Link>
+          ) : null}
           <Link
             href="/events"
             onClick={closeMobileMenu}

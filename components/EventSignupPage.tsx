@@ -3,20 +3,26 @@
 import Link from "next/link";
 import { useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 import Reveal from "@/components/Reveal";
-import SmartImage from "@/components/SmartImage";
 import { useLocalEvents } from "@/components/useLocalEvents";
 import { useLocalRsvps } from "@/components/useLocalRsvps";
-import { defaultEvents } from "@/lib/events";
-import { createEmptyRsvp, normalizeRsvp, type EventRsvp } from "@/lib/rsvps";
+import { defaultEvents, getGoogleMapsHref } from "@/lib/events";
+import {
+  DEGREE_OPTIONS,
+  createEmptyRsvp,
+  getRsvpDisplayName,
+  normalizeRsvp,
+  type EventRsvp,
+} from "@/lib/rsvps";
 
 type EventSignupPageProps = {
   eventId: string;
 };
 
 const requiredFieldLabels = {
-  fullName: "Full name",
+  firstName: "First name",
+  lastName: "Last name",
   email: "Email address",
-  facultyOrDegree: "Faculty or degree",
+  degreeOption: "Where you fit in",
 } satisfies Record<string, string>;
 
 type RsvpDraft = Omit<EventRsvp, "id" | "createdAt">;
@@ -26,22 +32,17 @@ function buildDraft(eventId: string): RsvpDraft {
 
   return {
     eventId,
-    fullName: fallback.fullName,
+    firstName: fallback.firstName,
+    lastName: fallback.lastName,
     email: fallback.email,
-    phone: fallback.phone,
-    studentNumber: fallback.studentNumber,
-    facultyOrDegree: fallback.facultyOrDegree,
-    yearOfStudy: fallback.yearOfStudy,
-    dietaryRequirements: fallback.dietaryRequirements,
-    accessibilityNeeds: fallback.accessibilityNeeds,
-    notes: fallback.notes,
-    newsletterOptIn: fallback.newsletterOptIn,
+    degreeOption: fallback.degreeOption,
+    degreeOther: fallback.degreeOther,
   };
 }
 
 export default function EventSignupPage({ eventId }: EventSignupPageProps) {
   const { events, isReady: areEventsReady } = useLocalEvents();
-  const { rsvps, isReady: areRsvpsReady, addRsvp } = useLocalRsvps();
+  const { isReady: areRsvpsReady, addRsvp } = useLocalRsvps();
   const [draft, setDraft] = useState<RsvpDraft>(() => buildDraft(eventId));
   const [errorMessage, setErrorMessage] = useState("");
   const [submittedRsvp, setSubmittedRsvp] = useState<EventRsvp | null>(null);
@@ -63,11 +64,15 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
     [eventId, events, pageReady, previewEvent],
   );
 
-  const existingRsvpCount = useMemo(
-    () =>
-      pageReady ? rsvps.filter((item) => item.eventId === eventId).length : null,
-    [eventId, pageReady, rsvps],
-  );
+  const locationHref = getGoogleMapsHref(event?.locationMapValue);
+  const capacityBadgeClasses =
+    event?.capacityStatus === "medium"
+      ? "border-[rgba(255,166,87,0.5)] bg-[rgba(255,242,231,0.9)] text-[rgb(184,96,18)] shadow-[0_16px_32px_-22px_rgba(255,166,87,0.9),inset_0_1px_0_rgba(255,255,255,0.75)]"
+      : "border-[rgba(111,215,146,0.42)] bg-[rgba(237,255,243,0.9)] text-[rgb(28,122,69)] shadow-[0_16px_32px_-22px_rgba(111,215,146,0.9),inset_0_1px_0_rgba(255,255,255,0.75)]";
+  const capacityBadgeLabel =
+    event?.capacityStatus === "medium" ? "Medium Capacity" : "High Capacity";
+  const backButtonClassName =
+    "glass-button interactive-button inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-bold uppercase tracking-[1.3px] text-chevo-dark";
 
   function updateField<K extends keyof RsvpDraft>(key: K, value: RsvpDraft[K]) {
     setDraft((current) => ({
@@ -86,6 +91,15 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
         ? event.target.checked
         : event.target.value;
 
+    if (key === "degreeOption") {
+      setDraft((current) => ({
+        ...current,
+        degreeOption: nextValue as string,
+        degreeOther: nextValue === "Other" ? current.degreeOther : "",
+      }));
+      return;
+    }
+
     updateField(key, nextValue as RsvpDraft[typeof key]);
   }
 
@@ -93,6 +107,10 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
     const missingFields = Object.entries(requiredFieldLabels)
       .filter(([field]) => !draft[field as keyof typeof draft].toString().trim())
       .map(([, label]) => label);
+
+    if (draft.degreeOption === "Other" && !draft.degreeOther.trim()) {
+      missingFields.push("Did we miss you?");
+    }
 
     if (!missingFields.length) {
       return "";
@@ -161,7 +179,7 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
             <div className="mt-8">
               <Link
                 href="/events"
-                className="interactive-button inline-flex items-center justify-center rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-6 py-3 text-sm font-bold uppercase tracking-[1.3px] text-white"
+                className={backButtonClassName}
               >
                 Back to Events
               </Link>
@@ -174,51 +192,38 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
 
   return (
     <div className="min-h-screen bg-chevo-bg font-grotesk">
-      <section className="mx-auto max-w-[1120px] px-6 pt-16 pb-20 lg:px-8">
+      <section className="mx-auto max-w-[980px] px-6 pt-16 pb-20 lg:px-8">
         <div className="mb-8">
           <Link
             href="/events"
-            className="interactive-link text-sm font-semibold text-chevo-red"
+            className={backButtonClassName}
           >
-            Back to events
+            Back to Events
           </Link>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-          <Reveal className="glass-panel overflow-hidden rounded-[30px]">
-            <div className="relative aspect-[16/12] overflow-hidden">
-              <SmartImage
-                src={event.imageUrl}
-                alt={event.title}
-                priority
-                sizes="(min-width: 1024px) 36vw, 100vw"
-                className="object-cover"
-              />
-            </div>
+        <div className="flex flex-col gap-8">
+          <Reveal className="glass-panel rounded-[30px] px-8 py-8 sm:px-10 sm:py-10">
+            <div className="space-y-6">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                <div className="max-w-3xl">
+                  <h1 className="text-4xl font-bold tracking-[-2px] text-chevo-dark sm:text-[42px] sm:leading-[46px]">
+                    {event.title}
+                  </h1>
+                </div>
 
-            <div className="space-y-6 p-8">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="glass-chip rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[1px] text-[#640600]">
-                  {event.category}
-                </span>
-                <span className="glass-chip rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[1px] text-chevo-dark">
-                  {event.organizer}
-                </span>
-                <span className="glass-chip rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[1px] text-chevo-slate">
-                  {event.status}
-                </span>
+                <div
+                  className={`inline-flex items-center justify-center rounded-[20px] border px-4 py-3 text-sm font-bold uppercase tracking-[1.2px] ${capacityBadgeClasses}`}
+                >
+                  {capacityBadgeLabel}
+                </div>
               </div>
 
-              <div>
-                <h1 className="text-4xl font-bold tracking-[-2px] text-chevo-dark">
-                  {event.title}
-                </h1>
-                <p className="mt-4 text-base leading-7 text-chevo-text-muted">
-                  {event.description}
-                </p>
-              </div>
+              <p className="max-w-4xl text-base leading-7 text-chevo-text-muted">
+                {event.description}
+              </p>
 
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="glass-inset rounded-2xl px-5 py-4">
                   <p className="text-[10px] font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
                     Date
@@ -239,9 +244,22 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
                   <p className="text-[10px] font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
                     Location
                   </p>
-                  <p className="mt-2 text-lg font-semibold text-chevo-dark">
-                    {event.location}
-                  </p>
+                  <div className="mt-2 flex items-center gap-2">
+                    <p className="text-lg font-semibold text-chevo-dark">
+                      {event.location}
+                    </p>
+                    {locationHref ? (
+                      <a
+                        href={locationHref}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={`Open ${event.location} in Google Maps`}
+                        className="interactive-link inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/85 text-lg"
+                      >
+                        📍
+                      </a>
+                    ) : null}
+                  </div>
                 </div>
                 <div className="glass-inset rounded-2xl px-5 py-4">
                   <p className="text-[10px] font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
@@ -251,21 +269,6 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
                     {event.capacityLabel}
                   </p>
                 </div>
-              </div>
-
-              <div className="glass-inset rounded-2xl px-5 py-4">
-                <p className="text-[10px] font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
-                  Local preview stats
-                </p>
-                {existingRsvpCount === null ? (
-                  <p className="mt-2 text-base font-semibold text-chevo-dark">
-                    Checking local RSVP count...
-                  </p>
-                ) : (
-                  <p className="mt-2 text-base font-semibold text-chevo-dark">
-                    {existingRsvpCount} RSVP{existingRsvpCount === 1 ? "" : "s"} recorded on this browser
-                  </p>
-                )}
               </div>
             </div>
           </Reveal>
@@ -314,15 +317,21 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
                       RSVP summary
                     </p>
                     <p className="mt-3 text-sm leading-6 text-chevo-dark">
-                      Name: <span className="font-semibold">{submittedRsvp.fullName}</span>
+                      Name:{" "}
+                      <span className="font-semibold">
+                        {getRsvpDisplayName(submittedRsvp)}
+                      </span>
                     </p>
                     <p className="mt-1 text-sm leading-6 text-chevo-dark">
                       Email: <span className="font-semibold">{submittedRsvp.email}</span>
                     </p>
                     <p className="mt-1 text-sm leading-6 text-chevo-dark">
-                      Newsletter:{" "}
+                      Where you fit in:{" "}
                       <span className="font-semibold">
-                        {submittedRsvp.newsletterOptIn ? "Yes" : "No"}
+                        {submittedRsvp.degreeOption === "Other" &&
+                        submittedRsvp.degreeOther
+                          ? submittedRsvp.degreeOther
+                          : submittedRsvp.degreeOption}
                       </span>
                     </p>
                   </div>
@@ -337,9 +346,9 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
                     </button>
                     <Link
                       href="/events"
-                      className="interactive-button rounded-full border border-white/70 bg-white/75 px-6 py-3 text-sm font-bold uppercase tracking-[1.3px] text-chevo-dark"
+                      className={backButtonClassName}
                     >
-                      Back to events
+                      Back to Events
                     </Link>
                   </div>
                 </div>
@@ -402,24 +411,39 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
 
                   <form onSubmit={handleSubmit} className="space-y-5">
                     <div className="grid gap-5 sm:grid-cols-2">
-                      <label className="block sm:col-span-2">
+                      <label className="block">
                         <span className="mb-2 block text-xs font-bold uppercase tracking-[1.2px] text-chevo-muted-text">
-                          Full name
+                          First Name
                         </span>
                         <input
-                          name="fullName"
-                          value={draft.fullName}
-                          onChange={(event) => handleInputChange("fullName", event)}
-                          autoComplete="name"
+                          name="firstName"
+                          value={draft.firstName}
+                          onChange={(event) => handleInputChange("firstName", event)}
+                          autoComplete="given-name"
                           required
                           className="glass-input w-full rounded-2xl px-4 py-3 text-sm text-chevo-dark outline-none"
-                          placeholder="Your name"
+                          placeholder="Jane"
                         />
                       </label>
 
                       <label className="block">
                         <span className="mb-2 block text-xs font-bold uppercase tracking-[1.2px] text-chevo-muted-text">
-                          Email address
+                          Last Name
+                        </span>
+                        <input
+                          name="lastName"
+                          value={draft.lastName}
+                          onChange={(event) => handleInputChange("lastName", event)}
+                          autoComplete="family-name"
+                          required
+                          className="glass-input w-full rounded-2xl px-4 py-3 text-sm text-chevo-dark outline-none"
+                          placeholder="Doe"
+                        />
+                      </label>
+
+                      <label className="block sm:col-span-2">
+                        <span className="mb-2 block text-xs font-bold uppercase tracking-[1.2px] text-chevo-muted-text">
+                          Email Address (personal)
                         </span>
                         <input
                           type="email"
@@ -433,134 +457,42 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
                         />
                       </label>
 
-                      <label className="block">
-                        <span className="mb-2 block text-xs font-bold uppercase tracking-[1.2px] text-chevo-muted-text">
-                          Phone
-                        </span>
-                        <input
-                          type="tel"
-                          name="phone"
-                          value={draft.phone}
-                          onChange={(event) => handleInputChange("phone", event)}
-                          autoComplete="tel"
-                          className="glass-input w-full rounded-2xl px-4 py-3 text-sm text-chevo-dark outline-none"
-                          placeholder="+27 ..."
-                        />
-                      </label>
-
-                      <label className="block">
-                        <span className="mb-2 block text-xs font-bold uppercase tracking-[1.2px] text-chevo-muted-text">
-                          Student number
-                        </span>
-                        <input
-                          name="studentNumber"
-                          value={draft.studentNumber}
-                          onChange={(event) =>
-                            handleInputChange("studentNumber", event)
-                          }
-                          className="glass-input w-full rounded-2xl px-4 py-3 text-sm text-chevo-dark outline-none"
-                          placeholder="Optional"
-                        />
-                      </label>
-
-                      <label className="block">
-                        <span className="mb-2 block text-xs font-bold uppercase tracking-[1.2px] text-chevo-muted-text">
-                          Faculty or degree
-                        </span>
-                        <input
-                          name="facultyOrDegree"
-                          value={draft.facultyOrDegree}
-                          onChange={(event) =>
-                            handleInputChange("facultyOrDegree", event)
-                          }
-                          required
-                          className="glass-input w-full rounded-2xl px-4 py-3 text-sm text-chevo-dark outline-none"
-                          placeholder="Electrical Engineering"
-                        />
-                      </label>
-
                       <label className="block sm:col-span-2">
                         <span className="mb-2 block text-xs font-bold uppercase tracking-[1.2px] text-chevo-muted-text">
-                          Year of study
+                          Where do you fit in?
                         </span>
                         <select
-                          name="yearOfStudy"
-                          value={draft.yearOfStudy}
-                          onChange={(event) =>
-                            handleInputChange("yearOfStudy", event)
-                          }
+                          name="degreeOption"
+                          value={draft.degreeOption}
+                          onChange={(event) => handleInputChange("degreeOption", event)}
+                          required
                           className="glass-input w-full rounded-2xl px-4 py-3 text-sm text-chevo-dark outline-none"
                         >
-                          <option value="">Select a year</option>
-                          <option value="1st year">1st year</option>
-                          <option value="2nd year">2nd year</option>
-                          <option value="3rd year">3rd year</option>
-                          <option value="4th year">4th year</option>
-                          <option value="Postgrad">Postgrad</option>
-                          <option value="Other">Other</option>
+                          <option value="">Select an option</option>
+                          {DEGREE_OPTIONS.map((option) => (
+                            <option key={option} value={option}>
+                              {option}
+                            </option>
+                          ))}
                         </select>
                       </label>
 
                       <label className="block sm:col-span-2">
                         <span className="mb-2 block text-xs font-bold uppercase tracking-[1.2px] text-chevo-muted-text">
-                          Dietary requirements
+                          Did we miss you? 🤔 (If you chose other)
                         </span>
                         <input
-                          name="dietaryRequirements"
-                          value={draft.dietaryRequirements}
+                          name="degreeOther"
+                          value={draft.degreeOther}
                           onChange={(event) =>
-                            handleInputChange("dietaryRequirements", event)
+                            handleInputChange("degreeOther", event)
                           }
+                          disabled={draft.degreeOption !== "Other"}
                           className="glass-input w-full rounded-2xl px-4 py-3 text-sm text-chevo-dark outline-none"
-                          placeholder="Optional"
-                        />
-                      </label>
-
-                      <label className="block sm:col-span-2">
-                        <span className="mb-2 block text-xs font-bold uppercase tracking-[1.2px] text-chevo-muted-text">
-                          Accessibility needs
-                        </span>
-                        <input
-                          name="accessibilityNeeds"
-                          value={draft.accessibilityNeeds}
-                          onChange={(event) =>
-                            handleInputChange("accessibilityNeeds", event)
-                          }
-                          className="glass-input w-full rounded-2xl px-4 py-3 text-sm text-chevo-dark outline-none"
-                          placeholder="Optional"
-                        />
-                      </label>
-
-                      <label className="block sm:col-span-2">
-                        <span className="mb-2 block text-xs font-bold uppercase tracking-[1.2px] text-chevo-muted-text">
-                          Anything you want from this event?
-                        </span>
-                        <textarea
-                          name="notes"
-                          value={draft.notes}
-                          onChange={(event) => handleInputChange("notes", event)}
-                          rows={4}
-                          className="glass-input w-full rounded-2xl px-4 py-3 text-sm text-chevo-dark outline-none"
-                          placeholder="Optional notes, questions, or context"
+                          placeholder="Enter your degree or faculty"
                         />
                       </label>
                     </div>
-
-                    <label className="glass-inset flex items-start gap-3 rounded-2xl px-4 py-4">
-                      <input
-                        type="checkbox"
-                        name="newsletterOptIn"
-                        checked={draft.newsletterOptIn}
-                        onChange={(event) =>
-                          handleInputChange("newsletterOptIn", event)
-                        }
-                        className="mt-1 h-4 w-4 accent-chevo-red"
-                      />
-                      <span className="text-sm leading-6 text-chevo-dark">
-                        Add me to the Chevo mailing list as well so I hear about
-                        future workshops, socials, and project nights.
-                      </span>
-                    </label>
 
                     <button
                       type="submit"

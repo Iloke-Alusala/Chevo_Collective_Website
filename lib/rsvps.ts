@@ -1,17 +1,35 @@
+export const DEGREE_OPTIONS = [
+  "Mechatronics Engineering",
+  "Electrical and Computer Engineering",
+  "Electrical Engineering",
+  "Mech and Mechatronics Engineering",
+  "Civil Engineering",
+  "Mechanical Engineering",
+  "Chemical Engineering",
+  "Architecture, Planning & Geomatics",
+  "Humanities Faculty",
+  "Computer Science",
+  "Commerce Faculty",
+  "Health Sciences Faculty",
+  "Law Faculty",
+  "Science Faculty",
+  "Other",
+] as const;
+
 export type EventRsvp = {
   id: string;
   eventId: string;
-  fullName: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  phone: string;
-  studentNumber: string;
-  facultyOrDegree: string;
-  yearOfStudy: string;
-  dietaryRequirements: string;
-  accessibilityNeeds: string;
-  notes: string;
-  newsletterOptIn: boolean;
+  degreeOption: string;
+  degreeOther: string;
   createdAt: string;
+};
+
+type LegacyEventRsvp = Partial<EventRsvp> & {
+  fullName?: string;
+  facultyOrDegree?: string;
 };
 
 export const LOCAL_RSVPS_KEY = "chevo-local-rsvps-v1";
@@ -29,38 +47,66 @@ export function createEmptyRsvp(eventId: string): EventRsvp {
   return {
     id: createRsvpId(),
     eventId,
-    fullName: "",
+    firstName: "",
+    lastName: "",
     email: "",
-    phone: "",
-    studentNumber: "",
-    facultyOrDegree: "",
-    yearOfStudy: "",
-    dietaryRequirements: "",
-    accessibilityNeeds: "",
-    notes: "",
-    newsletterOptIn: false,
+    degreeOption: "",
+    degreeOther: "",
     createdAt: new Date().toISOString(),
   };
 }
 
-export function normalizeRsvp(rsvp: Partial<EventRsvp>, index = 0): EventRsvp {
+function parseLegacyName(fullName?: string) {
+  const trimmedName = fullName?.trim() || "";
+
+  if (!trimmedName) {
+    return {
+      firstName: "",
+      lastName: "",
+    };
+  }
+
+  const [firstName = "", ...rest] = trimmedName.split(/\s+/);
+
+  return {
+    firstName,
+    lastName: rest.join(" "),
+  };
+}
+
+function isKnownDegreeOption(value?: string) {
+  return DEGREE_OPTIONS.includes(value as (typeof DEGREE_OPTIONS)[number]);
+}
+
+export function getRsvpDisplayName(rsvp: Pick<EventRsvp, "firstName" | "lastName">) {
+  return [rsvp.firstName, rsvp.lastName].filter(Boolean).join(" ").trim();
+}
+
+export function normalizeRsvp(rsvp: LegacyEventRsvp, index = 0): EventRsvp {
   const fallback = createEmptyRsvp(rsvp.eventId?.trim() || "");
+  const legacyName = parseLegacyName(rsvp.fullName);
+  const legacyDegree = rsvp.facultyOrDegree?.trim() || "";
+  const degreeOption = rsvp.degreeOption?.trim()
+    ? rsvp.degreeOption.trim()
+    : isKnownDegreeOption(legacyDegree)
+      ? legacyDegree
+      : legacyDegree
+        ? "Other"
+        : fallback.degreeOption;
+  const degreeOther = rsvp.degreeOther?.trim()
+    ? rsvp.degreeOther.trim()
+    : degreeOption === "Other" && legacyDegree && !isKnownDegreeOption(legacyDegree)
+      ? legacyDegree
+      : fallback.degreeOther;
 
   return {
     id: rsvp.id?.trim() || fallback.id || `rsvp-${index + 1}`,
     eventId: rsvp.eventId?.trim() || fallback.eventId,
-    fullName: rsvp.fullName?.trim() || fallback.fullName,
+    firstName: rsvp.firstName?.trim() || legacyName.firstName || fallback.firstName,
+    lastName: rsvp.lastName?.trim() || legacyName.lastName || fallback.lastName,
     email: rsvp.email?.trim().toLowerCase() || fallback.email,
-    phone: rsvp.phone?.trim() || fallback.phone,
-    studentNumber: rsvp.studentNumber?.trim() || fallback.studentNumber,
-    facultyOrDegree: rsvp.facultyOrDegree?.trim() || fallback.facultyOrDegree,
-    yearOfStudy: rsvp.yearOfStudy?.trim() || fallback.yearOfStudy,
-    dietaryRequirements:
-      rsvp.dietaryRequirements?.trim() || fallback.dietaryRequirements,
-    accessibilityNeeds:
-      rsvp.accessibilityNeeds?.trim() || fallback.accessibilityNeeds,
-    notes: rsvp.notes?.trim() || fallback.notes,
-    newsletterOptIn: Boolean(rsvp.newsletterOptIn),
+    degreeOption,
+    degreeOther,
     createdAt: rsvp.createdAt?.trim() || fallback.createdAt,
   };
 }
@@ -68,5 +114,5 @@ export function normalizeRsvp(rsvp: Partial<EventRsvp>, index = 0): EventRsvp {
 export function normalizeRsvps(rsvps: EventRsvp[]) {
   return rsvps
     .map((rsvp, index) => normalizeRsvp(rsvp, index))
-    .filter((rsvp) => rsvp.eventId && rsvp.email);
+    .filter((rsvp) => rsvp.eventId && rsvp.email && rsvp.firstName && rsvp.lastName);
 }

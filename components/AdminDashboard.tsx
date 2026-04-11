@@ -16,6 +16,7 @@ import {
   type EventItem,
   type EventStatus,
 } from "@/lib/events";
+import { getRsvpDisplayName } from "@/lib/rsvps";
 
 type InventoryFilter = "all" | EventStatus;
 
@@ -153,8 +154,11 @@ export default function AdminDashboard() {
     [rsvps, selectedId],
   );
 
-  const newsletterOptInCount = useMemo(
-    () => selectedEventRsvps.filter((rsvp) => rsvp.newsletterOptIn).length,
+  const customDegreeCount = useMemo(
+    () =>
+      selectedEventRsvps.filter(
+        (rsvp) => rsvp.degreeOption === "Other" && rsvp.degreeOther,
+      ).length,
     [selectedEventRsvps],
   );
 
@@ -343,10 +347,10 @@ export default function AdminDashboard() {
               </div>
               <div className="glass-inset rounded-[24px] px-5 py-4">
                 <p className="text-[11px] font-bold uppercase tracking-[1.5px] text-chevo-muted-text">
-                  Newsletter opt-ins
+                  Total RSVPs
                 </p>
                 <p className="mt-3 text-3xl font-bold text-chevo-dark">
-                  {rsvps.filter((rsvp) => rsvp.newsletterOptIn).length}
+                  {rsvps.length}
                 </p>
               </div>
             </div>
@@ -611,14 +615,17 @@ export default function AdminDashboard() {
                           <span className="mb-2 block text-xs font-bold uppercase tracking-[1.2px] text-chevo-muted-text">
                             Category
                           </span>
-                          <input
+                          <select
                             value={draft.category}
                             onChange={(event) =>
                               updateDraft("category", event.target.value)
                             }
                             className="glass-input w-full rounded-2xl px-4 py-3 text-sm text-chevo-dark outline-none"
-                            placeholder="Workshop"
-                          />
+                          >
+                            <option value="Workshop">Workshop</option>
+                            <option value="Social">Social</option>
+                            <option value="Talk">Talk</option>
+                          </select>
                         </label>
 
                         <label className="block">
@@ -733,6 +740,20 @@ export default function AdminDashboard() {
 
                         <label className="block">
                           <span className="mb-2 block text-xs font-bold uppercase tracking-[1.2px] text-chevo-muted-text">
+                            Maps link / coordinates
+                          </span>
+                          <input
+                            value={draft.locationMapValue}
+                            onChange={(event) =>
+                              updateDraft("locationMapValue", event.target.value)
+                            }
+                            className="glass-input w-full rounded-2xl px-4 py-3 text-sm text-chevo-dark outline-none"
+                            placeholder="-33.957, 18.461 or https://maps.google.com/..."
+                          />
+                        </label>
+
+                        <label className="block">
+                          <span className="mb-2 block text-xs font-bold uppercase tracking-[1.2px] text-chevo-muted-text">
                             Capacity / detail
                           </span>
                           <input
@@ -743,6 +764,25 @@ export default function AdminDashboard() {
                             className="glass-input w-full rounded-2xl px-4 py-3 text-sm text-chevo-dark outline-none"
                             placeholder="40 seats"
                           />
+                        </label>
+
+                        <label className="block">
+                          <span className="mb-2 block text-xs font-bold uppercase tracking-[1.2px] text-chevo-muted-text">
+                            Capacity status
+                          </span>
+                          <select
+                            value={draft.capacityStatus}
+                            onChange={(event) =>
+                              updateDraft(
+                                "capacityStatus",
+                                event.target.value as EventItem["capacityStatus"],
+                              )
+                            }
+                            className="glass-input w-full rounded-2xl px-4 py-3 text-sm text-chevo-dark outline-none"
+                          >
+                            <option value="high">High capacity</option>
+                            <option value="medium">Medium capacity</option>
+                          </select>
                         </label>
                       </div>
                     </section>
@@ -865,10 +905,10 @@ export default function AdminDashboard() {
                             </div>
                             <div className="glass-inset rounded-2xl px-4 py-4">
                               <p className="text-[10px] font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
-                                Newsletter opt-ins
+                                Custom degrees
                               </p>
                               <p className="mt-2 text-2xl font-bold text-chevo-dark">
-                                {newsletterOptInCount}
+                                {customDegreeCount}
                               </p>
                             </div>
                           </div>
@@ -882,20 +922,19 @@ export default function AdminDashboard() {
                                 <div className="flex items-start justify-between gap-4">
                                   <div>
                                     <p className="text-sm font-bold text-chevo-dark">
-                                      {rsvp.fullName}
+                                      {getRsvpDisplayName(rsvp)}
                                     </p>
                                     <p className="mt-1 text-sm text-chevo-text-muted">
                                       {rsvp.email}
                                     </p>
                                     <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-bold uppercase tracking-[1.1px] text-chevo-muted-text">
-                                      {rsvp.facultyOrDegree ? (
-                                        <span>{rsvp.facultyOrDegree}</span>
-                                      ) : null}
-                                      {rsvp.yearOfStudy ? (
-                                        <span>{rsvp.yearOfStudy}</span>
-                                      ) : null}
-                                      {rsvp.newsletterOptIn ? (
-                                        <span>Newsletter</span>
+                                      {rsvp.degreeOption ? (
+                                        <span>
+                                          {rsvp.degreeOption === "Other" &&
+                                          rsvp.degreeOther
+                                            ? rsvp.degreeOther
+                                            : rsvp.degreeOption}
+                                        </span>
                                       ) : null}
                                     </div>
                                   </div>
@@ -909,31 +948,11 @@ export default function AdminDashboard() {
                                   </button>
                                 </div>
 
-                                {(rsvp.phone ||
-                                  rsvp.studentNumber ||
-                                  rsvp.dietaryRequirements ||
-                                  rsvp.accessibilityNeeds ||
-                                  rsvp.notes) && (
+                                {rsvp.degreeOption === "Other" && rsvp.degreeOther ? (
                                   <div className="mt-4 space-y-2 text-sm leading-6 text-chevo-text-muted">
-                                    {rsvp.phone ? <p>Phone: {rsvp.phone}</p> : null}
-                                    {rsvp.studentNumber ? (
-                                      <p>Student number: {rsvp.studentNumber}</p>
-                                    ) : null}
-                                    {rsvp.dietaryRequirements ? (
-                                      <p>
-                                        Dietary requirements:{" "}
-                                        {rsvp.dietaryRequirements}
-                                      </p>
-                                    ) : null}
-                                    {rsvp.accessibilityNeeds ? (
-                                      <p>
-                                        Accessibility needs:{" "}
-                                        {rsvp.accessibilityNeeds}
-                                      </p>
-                                    ) : null}
-                                    {rsvp.notes ? <p>Notes: {rsvp.notes}</p> : null}
+                                    <p>Custom degree entry: {rsvp.degreeOther}</p>
                                   </div>
-                                )}
+                                ) : null}
 
                                 <p className="mt-4 text-[11px] font-bold uppercase tracking-[1.1px] text-chevo-muted-text">
                                   Submitted {formatTimestamp(rsvp.createdAt)}
