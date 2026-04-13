@@ -3,8 +3,6 @@
 import Link from "next/link";
 import { useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 import Reveal from "@/components/Reveal";
-import { useLocalEvents } from "@/components/useLocalEvents";
-import { useLocalRsvps } from "@/components/useLocalRsvps";
 import { defaultEvents, getGoogleMapsHref } from "@/lib/events";
 import {
   DEGREE_OPTIONS,
@@ -15,7 +13,7 @@ import {
 } from "@/lib/rsvps";
 
 type EventSignupPageProps = {
-  eventId: string;
+  eventSlug: string;
 };
 
 const requiredFieldLabels = {
@@ -40,29 +38,17 @@ function buildDraft(eventId: string): RsvpDraft {
   };
 }
 
-export default function EventSignupPage({ eventId }: EventSignupPageProps) {
-  const { events, isReady: areEventsReady } = useLocalEvents();
-  const { isReady: areRsvpsReady, addRsvp } = useLocalRsvps();
-  const [draft, setDraft] = useState<RsvpDraft>(() => buildDraft(eventId));
+export default function EventSignupPage({ eventSlug }: EventSignupPageProps) {
+  const event = useMemo(
+    () => defaultEvents.find((item) => item.slug === eventSlug) ?? null,
+    [eventSlug],
+  );
+  const [draft, setDraft] = useState<RsvpDraft>(() =>
+    buildDraft(event?.id || ""),
+  );
   const [errorMessage, setErrorMessage] = useState("");
   const [submittedRsvp, setSubmittedRsvp] = useState<EventRsvp | null>(null);
-  const pageReady = areEventsReady && areRsvpsReady;
-
-  const previewEvent = useMemo(
-    () =>
-      events.find((item) => item.id === eventId) ??
-      defaultEvents.find((item) => item.id === eventId) ??
-      null,
-    [eventId, events],
-  );
-
-  const event = useMemo(
-    () =>
-      pageReady
-        ? events.find((item) => item.id === eventId) ?? null
-        : previewEvent,
-    [eventId, events, pageReady, previewEvent],
-  );
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const locationHref = getGoogleMapsHref(event?.locationMapValue);
   const capacityBadgeClasses =
@@ -73,6 +59,8 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
     event?.capacityStatus === "medium" ? "Medium Capacity" : "High Capacity";
   const backButtonClassName =
     "glass-button interactive-button inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-bold uppercase tracking-[1.3px] text-chevo-dark";
+  const rsvpInsetClassName =
+    "rounded-2xl border border-[rgba(226,232,240,0.92)] bg-[rgba(242,245,249,0.94)] shadow-[inset_10px_10px_18px_rgba(211,217,227,0.34),inset_-8px_-8px_16px_rgba(255,255,255,0.96),0_18px_28px_-26px_rgba(71,85,105,0.32)]";
 
   function updateField<K extends keyof RsvpDraft>(key: K, value: RsvpDraft[K]) {
     setDraft((current) => ({
@@ -83,18 +71,16 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
 
   function handleInputChange(
     key: keyof RsvpDraft,
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+    nextEvent: ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) {
-    const nextValue =
-      event.target instanceof HTMLInputElement &&
-      event.target.type === "checkbox"
-        ? event.target.checked
-        : event.target.value;
+    const nextValue = nextEvent.target.value;
 
     if (key === "degreeOption") {
       setDraft((current) => ({
         ...current,
-        degreeOption: nextValue as string,
+        degreeOption: nextValue,
         degreeOther: nextValue === "Other" ? current.degreeOther : "",
       }));
       return;
@@ -119,13 +105,8 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
     return `Add values for: ${missingFields.join(", ")}.`;
   }
 
-  function handleSubmit(submitEvent: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(submitEvent: FormEvent<HTMLFormElement>) {
     submitEvent.preventDefault();
-
-    if (!pageReady) {
-      setErrorMessage("Still loading the local RSVP workspace. Try again.");
-      return;
-    }
 
     if (!event) {
       setErrorMessage("This event could not be found.");
@@ -139,26 +120,55 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
       return;
     }
 
-    const nextRsvp = normalizeRsvp(
-      {
-        ...draft,
-        eventId: event.id,
-      },
-      0,
-    );
-
-    const result = addRsvp(nextRsvp);
-
-    if (result.status === "duplicate") {
-      setErrorMessage(
-        "An RSVP with this email already exists for this event. If you need to update it, clear it locally in the admin dashboard first.",
-      );
-      return;
-    }
-
-    setSubmittedRsvp(result.rsvp);
+    setIsSubmitting(true);
     setErrorMessage("");
-    setDraft(buildDraft(event.id));
+
+    try {
+      const response = await fetch("/api/rsvps", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          eventSlug: event.slug,
+          firstName: draft.firstName,
+          lastName: draft.lastName,
+          email: draft.email,
+          degreeOption: draft.degreeOption,
+          degreeOther: draft.degreeOther,
+        }),
+      });
+
+      const payload = (await response.json()) as {
+        error?: string;
+        rsvp?: {
+          id: string;
+          created_at: string;
+        };
+      };
+
+      if (!response.ok || !payload.rsvp) {
+        setErrorMessage(payload.error || "The RSVP could not be saved.");
+        return;
+      }
+
+      setSubmittedRsvp(
+        normalizeRsvp(
+          {
+            ...draft,
+            eventId: event.id,
+            id: payload.rsvp.id,
+            createdAt: payload.rsvp.created_at,
+          },
+          0,
+        ),
+      );
+      setDraft(buildDraft(event.id));
+    } catch {
+      setErrorMessage("The RSVP request failed before it reached the server.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   if (!event) {
@@ -173,14 +183,11 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
               This event isn&apos;t available right now
             </h1>
             <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-chevo-text-muted">
-              The event may have been removed locally or the link may no longer
-              match the current event list.
+              The event may have been removed from the current public event set
+              or the link may no longer match a live event slug.
             </p>
             <div className="mt-8">
-              <Link
-                href="/events"
-                className={backButtonClassName}
-              >
+              <Link href="/events" className={backButtonClassName}>
                 Back to Events
               </Link>
             </div>
@@ -194,10 +201,7 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
     <div className="min-h-screen bg-chevo-bg font-grotesk">
       <section className="mx-auto max-w-[980px] px-6 pt-16 pb-20 lg:px-8">
         <div className="mb-8">
-          <Link
-            href="/events"
-            className={backButtonClassName}
-          >
+          <Link href="/events" className={backButtonClassName}>
             Back to Events
           </Link>
         </div>
@@ -223,8 +227,8 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
                 {event.description}
               </p>
 
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <div className="glass-inset rounded-2xl px-5 py-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className={`${rsvpInsetClassName} px-5 py-4`}>
                   <p className="text-[10px] font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
                     Date
                   </p>
@@ -232,7 +236,7 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
                     {event.dateLabel}
                   </p>
                 </div>
-                <div className="glass-inset rounded-2xl px-5 py-4">
+                <div className={`${rsvpInsetClassName} px-5 py-4`}>
                   <p className="text-[10px] font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
                     Time
                   </p>
@@ -240,7 +244,15 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
                     {event.timeLabel}
                   </p>
                 </div>
-                <div className="glass-inset rounded-2xl px-5 py-4">
+                <div className={`${rsvpInsetClassName} px-5 py-4`}>
+                  <p className="text-[10px] font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
+                    Capacity
+                  </p>
+                  <p className="mt-2 text-lg font-semibold text-chevo-dark">
+                    {event.capacityLabel}
+                  </p>
+                </div>
+                <div className={`${rsvpInsetClassName} px-5 py-4`}>
                   <p className="text-[10px] font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
                     Location
                   </p>
@@ -261,42 +273,13 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
                     ) : null}
                   </div>
                 </div>
-                <div className="glass-inset rounded-2xl px-5 py-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
-                    Capacity
-                  </p>
-                  <p className="mt-2 text-lg font-semibold text-chevo-dark">
-                    {event.capacityLabel}
-                  </p>
-                </div>
               </div>
             </div>
           </Reveal>
 
           <Reveal delay={110}>
             <div className="glass-panel rounded-[30px] px-8 py-8 sm:px-10 sm:py-10">
-              {!pageReady ? (
-                <div className="space-y-6">
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-[1.6px] text-chevo-muted-text">
-                      Loading signup
-                    </p>
-                    <h2 className="mt-3 text-3xl font-bold tracking-[-1.8px] text-chevo-dark">
-                      Checking the local RSVP workspace
-                    </h2>
-                    <p className="mt-3 text-base leading-7 text-chevo-text-muted">
-                      We&apos;re confirming the latest local event state before
-                      opening the RSVP form so the details stay accurate.
-                    </p>
-                  </div>
-
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="glass-inset min-h-[88px] rounded-2xl" />
-                    <div className="glass-inset min-h-[88px] rounded-2xl" />
-                    <div className="glass-inset min-h-[88px] rounded-2xl sm:col-span-2" />
-                  </div>
-                </div>
-              ) : submittedRsvp ? (
+              {submittedRsvp ? (
                 <div className="space-y-6">
                   <div>
                     <p className="text-xs font-bold uppercase tracking-[1.6px] text-chevo-red">
@@ -306,13 +289,12 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
                       You&apos;re on the list for {event.title}
                     </h2>
                     <p className="mt-3 text-base leading-7 text-chevo-text-muted">
-                      We&apos;ve saved your RSVP locally for now. Once Supabase
-                      is connected, this same flow can be switched over to a
-                      shared backend.
+                      Your RSVP has been saved to the Chevo database and this
+                      event now has your details on record.
                     </p>
                   </div>
 
-                  <div className="glass-inset rounded-[24px] px-5 py-5">
+                  <div className={`${rsvpInsetClassName} rounded-[24px] px-5 py-5`}>
                     <p className="text-[11px] font-bold uppercase tracking-[1.5px] text-chevo-muted-text">
                       RSVP summary
                     </p>
@@ -342,12 +324,9 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
                       onClick={() => setSubmittedRsvp(null)}
                       className="interactive-button rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-6 py-3 text-sm font-bold uppercase tracking-[1.3px] text-white"
                     >
-                      Add another RSVP
+                      Add Another RSVP
                     </button>
-                    <Link
-                      href="/events"
-                      className={backButtonClassName}
-                    >
+                    <Link href="/events" className={backButtonClassName}>
                       Back to Events
                     </Link>
                   </div>
@@ -368,7 +347,7 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
                     </p>
                   </div>
 
-                  <div className="glass-inset rounded-[24px] px-5 py-5">
+                  <div className={`${rsvpInsetClassName} rounded-[24px] px-5 py-5`}>
                     <p className="text-[11px] font-bold uppercase tracking-[1.5px] text-chevo-muted-text">
                       Want updates on the next one?
                     </p>
@@ -383,7 +362,7 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
                         rel="noopener noreferrer"
                         className="interactive-button inline-flex items-center justify-center rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-6 py-3 text-sm font-bold uppercase tracking-[1.3px] text-white"
                       >
-                        Join the mailing list
+                        Join the Mailing List
                       </a>
                     </div>
                   </div>
@@ -418,7 +397,9 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
                         <input
                           name="firstName"
                           value={draft.firstName}
-                          onChange={(event) => handleInputChange("firstName", event)}
+                          onChange={(nextEvent) =>
+                            handleInputChange("firstName", nextEvent)
+                          }
                           autoComplete="given-name"
                           required
                           className="glass-input w-full rounded-2xl px-4 py-3 text-sm text-chevo-dark outline-none"
@@ -433,7 +414,9 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
                         <input
                           name="lastName"
                           value={draft.lastName}
-                          onChange={(event) => handleInputChange("lastName", event)}
+                          onChange={(nextEvent) =>
+                            handleInputChange("lastName", nextEvent)
+                          }
                           autoComplete="family-name"
                           required
                           className="glass-input w-full rounded-2xl px-4 py-3 text-sm text-chevo-dark outline-none"
@@ -449,7 +432,7 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
                           type="email"
                           name="email"
                           value={draft.email}
-                          onChange={(event) => handleInputChange("email", event)}
+                          onChange={(nextEvent) => handleInputChange("email", nextEvent)}
                           autoComplete="email"
                           required
                           className="glass-input w-full rounded-2xl px-4 py-3 text-sm text-chevo-dark outline-none"
@@ -464,7 +447,9 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
                         <select
                           name="degreeOption"
                           value={draft.degreeOption}
-                          onChange={(event) => handleInputChange("degreeOption", event)}
+                          onChange={(nextEvent) =>
+                            handleInputChange("degreeOption", nextEvent)
+                          }
                           required
                           className="glass-input w-full rounded-2xl px-4 py-3 text-sm text-chevo-dark outline-none"
                         >
@@ -479,16 +464,16 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
 
                       <label className="block sm:col-span-2">
                         <span className="mb-2 block text-xs font-bold uppercase tracking-[1.2px] text-chevo-muted-text">
-                          Did we miss you? 🤔 (If you chose other)
+                          Did we miss you? (If you chose other)
                         </span>
                         <input
                           name="degreeOther"
                           value={draft.degreeOther}
-                          onChange={(event) =>
-                            handleInputChange("degreeOther", event)
+                          onChange={(nextEvent) =>
+                            handleInputChange("degreeOther", nextEvent)
                           }
                           disabled={draft.degreeOption !== "Other"}
-                          className="glass-input w-full rounded-2xl px-4 py-3 text-sm text-chevo-dark outline-none"
+                          className="glass-input w-full rounded-2xl px-4 py-3 text-sm text-chevo-dark outline-none disabled:opacity-70"
                           placeholder="Enter your degree or faculty"
                         />
                       </label>
@@ -496,9 +481,10 @@ export default function EventSignupPage({ eventId }: EventSignupPageProps) {
 
                     <button
                       type="submit"
-                      className="interactive-button inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-6 py-3.5 text-sm font-bold uppercase tracking-[1.3px] text-white"
+                      disabled={isSubmitting}
+                      className="interactive-button inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-6 py-3.5 text-sm font-bold uppercase tracking-[1.3px] text-white disabled:cursor-not-allowed disabled:opacity-70"
                     >
-                      Submit RSVP
+                      {isSubmitting ? "Submitting..." : "Submit RSVP"}
                     </button>
                   </form>
                 </div>

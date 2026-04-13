@@ -3,6 +3,7 @@ import Reveal from "@/components/Reveal";
 
 type AdminLoginProps = {
   errorMessage?: string;
+  securityMessage?: string | null;
   defaultCredentials?: {
     username: string;
     password: string;
@@ -11,6 +12,7 @@ type AdminLoginProps = {
 
 export default function AdminLogin({
   errorMessage,
+  securityMessage = null,
   defaultCredentials = null,
 }: AdminLoginProps) {
   return (
@@ -28,9 +30,9 @@ export default function AdminLogin({
                     Sign in to manage events
                   </h1>
                   <p className="max-w-2xl text-base leading-7 text-chevo-text-muted">
-                    This is the local control room for adding events, editing
-                    cards, changing featured items, and preparing the event
-                    system before Supabase is connected.
+                    This is the control room for managing database-backed event
+                    records, editing live previews, and keeping the RSVP system
+                    ready for real submissions.
                   </p>
                 </div>
               </div>
@@ -51,8 +53,8 @@ export default function AdminLogin({
                     Current mode
                   </p>
                   <p className="mt-3 text-sm leading-6 text-chevo-dark">
-                    Local-only auth and browser-persisted event data for now.
-                    Supabase can replace this without changing the dashboard UI.
+                    Local admin auth at the front door, with event records and
+                    RSVPs now backed by Supabase.
                   </p>
                 </div>
               </div>
@@ -67,13 +69,19 @@ export default function AdminLogin({
                     Admin Login
                   </h2>
                   <p className="mt-2 text-sm leading-6 text-chevo-text-muted">
-                    Enter your admin credentials to open the event dashboard.
+                    Enter your admin credentials to open the event workspace.
                   </p>
                 </div>
 
                 {errorMessage ? (
                   <div className="rounded-2xl border border-chevo-red/20 bg-[rgba(255,99,74,0.08)] px-4 py-3 text-sm font-medium text-chevo-red">
                     {errorMessage}
+                  </div>
+                ) : null}
+
+                {securityMessage ? (
+                  <div className="rounded-2xl border border-[rgba(255,166,87,0.28)] bg-[rgba(255,245,238,0.85)] px-4 py-3 text-sm font-medium text-[rgb(184,96,18)]">
+                    {securityMessage}
                   </div>
                 ) : null}
 
@@ -87,6 +95,7 @@ export default function AdminLogin({
                       name="username"
                       autoComplete="username"
                       required
+                      disabled={Boolean(securityMessage)}
                       className="glass-input w-full rounded-2xl px-4 py-3 text-sm text-chevo-dark outline-none"
                       placeholder="admin"
                     />
@@ -101,6 +110,7 @@ export default function AdminLogin({
                       name="password"
                       autoComplete="current-password"
                       required
+                      disabled={Boolean(securityMessage)}
                       className="glass-input w-full rounded-2xl px-4 py-3 text-sm text-chevo-dark outline-none"
                       placeholder="••••••••••••"
                     />
@@ -108,7 +118,8 @@ export default function AdminLogin({
 
                   <button
                     type="submit"
-                    className="interactive-button inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-6 py-3.5 text-sm font-bold uppercase tracking-[1.3px] text-white"
+                    disabled={Boolean(securityMessage)}
+                    className="interactive-button inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-6 py-3.5 text-sm font-bold uppercase tracking-[1.3px] text-white disabled:cursor-not-allowed disabled:opacity-65"
                   >
                     Open Dashboard
                   </button>

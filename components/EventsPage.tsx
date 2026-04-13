@@ -4,7 +4,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import EventCard from "@/components/EventCard";
 import Reveal from "@/components/Reveal";
 import SmartImage from "@/components/SmartImage";
-import { useLocalEvents } from "@/components/useLocalEvents";
 import { defaultEvents, type EventStatus } from "@/lib/events";
 
 const tagOptions = [
@@ -19,8 +18,6 @@ export default function EventsPage() {
   const [activeTag, setActiveTag] = useState("all");
   const [isTagMenuOpen, setIsTagMenuOpen] = useState(false);
   const tagMenuRef = useRef<HTMLDivElement | null>(null);
-  const { events, isReady } = useLocalEvents();
-  const sourceEvents = isReady ? events : defaultEvents;
   const selectedTagLabel =
     tagOptions.find((option) => option.value === activeTag)?.label ?? "All tags";
 
@@ -55,7 +52,7 @@ export default function EventsPage() {
 
   const upcomingEvents = useMemo(
     () =>
-      sourceEvents.filter(
+      defaultEvents.filter(
         (event) => {
           const normalizedCategory = event.category.trim().toLowerCase();
           const tagMatch =
@@ -69,11 +66,11 @@ export default function EventsPage() {
           return event.status === "upcoming" && tagMatch;
         },
       ),
-    [activeTag, sourceEvents],
+    [activeTag],
   );
   const pastEvents = useMemo(
     () =>
-      sourceEvents.filter(
+      defaultEvents.filter(
         (event) => {
           const normalizedCategory = event.category.trim().toLowerCase();
           const tagMatch =
@@ -87,7 +84,7 @@ export default function EventsPage() {
           return event.status === "past" && tagMatch;
         },
       ),
-    [activeTag, sourceEvents],
+    [activeTag],
   );
 
   const featuredUpcomingEvent =
@@ -111,9 +108,8 @@ export default function EventsPage() {
                 <span className="text-chevo-orange">Events</span>
               </h1>
               <p className="max-w-[560px] pt-4 text-lg leading-[29px] text-chevo-text-muted">
-                Workshops, socials, and presentations, all in one place. Every
-                event below is powered by the same shared local data model that
-                the admin dashboard edits.
+                Workshops, socials, and presentations, all in one place. These
+                are the current public Chevo events available right now.
               </p>
             </div>
           </div>
@@ -142,12 +138,12 @@ export default function EventsPage() {
 
       <div className="mx-auto max-w-[1280px] px-6 lg:px-8">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="glass-inset inline-flex rounded-full p-1.5">
+          <div className="glass-inset inline-flex w-full rounded-full p-1.5 lg:w-auto">
             <button
               type="button"
               aria-pressed={activeTab === "upcoming"}
               onClick={() => setActiveTab("upcoming")}
-              className={`interactive-button rounded-full px-5 py-2.5 text-sm font-bold uppercase tracking-[1.4px] ${
+              className={`interactive-button flex-1 rounded-full px-5 py-2.5 text-sm font-bold uppercase tracking-[1.4px] lg:flex-none ${
                 activeTab === "upcoming"
                   ? "bg-gradient-to-r from-chevo-red to-chevo-orange text-white shadow-[0_10px_18px_rgba(177,44,25,0.16)]"
                   : "text-chevo-text-muted hover:text-chevo-dark"
@@ -159,7 +155,7 @@ export default function EventsPage() {
               type="button"
               aria-pressed={activeTab === "past"}
               onClick={() => setActiveTab("past")}
-              className={`interactive-button rounded-full px-5 py-2.5 text-sm font-bold uppercase tracking-[1.4px] ${
+              className={`interactive-button flex-1 rounded-full px-5 py-2.5 text-sm font-bold uppercase tracking-[1.4px] lg:flex-none ${
                 activeTab === "past"
                   ? "bg-gradient-to-r from-chevo-red to-chevo-orange text-white shadow-[0_10px_18px_rgba(177,44,25,0.16)]"
                   : "text-chevo-text-muted hover:text-chevo-dark"
@@ -169,11 +165,11 @@ export default function EventsPage() {
             </button>
           </div>
 
-          <div className="flex flex-col gap-2 lg:items-end">
+          <div className="flex w-full flex-col gap-2 lg:w-auto lg:items-end">
             <span className="text-[11px] font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
               Filter by tag
             </span>
-            <div ref={tagMenuRef} className="relative min-w-[220px]">
+            <div ref={tagMenuRef} className="relative w-full sm:min-w-[220px]">
               <button
                 type="button"
                 aria-expanded={isTagMenuOpen}
@@ -195,9 +191,9 @@ export default function EventsPage() {
               </button>
 
               {isTagMenuOpen ? (
-                <div className="glass-dropdown-panel absolute top-[calc(100%+0.75rem)] right-0 z-30 min-w-full rounded-[24px] p-2">
+                <div className="glass-dropdown-panel absolute top-[calc(100%+0.75rem)] right-0 z-30 w-full rounded-[24px] p-2">
                   <ul role="listbox" aria-label="Event tags" className="space-y-1">
-                    {tagOptions.map((option) => {
+                    {tagOptions.map((option, index) => {
                       const isActive = option.value === activeTag;
 
                       return (
@@ -206,11 +202,12 @@ export default function EventsPage() {
                             type="button"
                             role="option"
                             aria-selected={isActive}
+                            style={{ animationDelay: `${index * 48}ms` }}
                             onClick={() => {
                               setActiveTag(option.value);
                               setIsTagMenuOpen(false);
                             }}
-                            className={`glass-dropdown-option interactive-button flex w-full items-center justify-between rounded-[18px] px-4 py-3 text-sm font-bold uppercase tracking-[1.15px] ${
+                            className={`glass-dropdown-option dropdown-ladder-item interactive-button flex w-full items-center justify-between rounded-[18px] px-4 py-3 text-sm font-bold uppercase tracking-[1.15px] ${
                               isActive
                                 ? "bg-[rgba(255,255,255,0.92)] text-chevo-dark shadow-[0_14px_24px_-20px_rgba(26,28,29,0.3)]"
                                 : "text-chevo-text-muted"
@@ -251,7 +248,7 @@ export default function EventsPage() {
               </div>
             ) : (
               <div className="glass-panel rounded-[28px] px-8 py-14 text-center text-lg font-medium text-chevo-muted-text">
-                No upcoming events yet. Add one in the local admin dashboard.
+                No upcoming events are live right now. Check back soon.
               </div>
             )
           ) : pastEvents.length ? (

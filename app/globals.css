@@ -146,6 +146,7 @@ button:focus-visible {
     inset 1px 1px 0 rgba(255, 255, 255, 0.78);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  animation: dropdown-panel-in 220ms var(--ease-standard) both;
 }
 
 .glass-dropdown-option {
@@ -154,6 +155,12 @@ button:focus-visible {
     color var(--duration-base) var(--ease-standard),
     transform var(--duration-base) var(--ease-gentle),
     box-shadow var(--duration-base) var(--ease-gentle);
+}
+
+.dropdown-ladder-item {
+  opacity: 0;
+  transform: translate3d(0, -8px, 0) scale(0.985);
+  animation: dropdown-ladder-in 320ms var(--ease-emphasized) both;
 }
 
 .glass-input::placeholder {
@@ -289,6 +296,14 @@ button:focus-visible {
   transform: translateX(-6px);
 }
 
+.event-chip-fan.is-expanded .event-chip-fan__chip {
+  transform: translateX(0);
+}
+
+.event-chip-fan.is-expanded .event-chip-fan__chip + .event-chip-fan__chip {
+  margin-left: 0.5rem;
+}
+
 .ambient-orb {
   animation: orb-float 11.5s var(--ease-emphasized) infinite alternate;
   will-change: transform;
@@ -378,6 +393,30 @@ button:focus-visible {
 
   to {
     transform: translate3d(0, -4px, 0) scale(1.01);
+  }
+}
+
+@keyframes dropdown-panel-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -6px, 0) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes dropdown-ladder-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -10px, 0) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
   }
 }
 

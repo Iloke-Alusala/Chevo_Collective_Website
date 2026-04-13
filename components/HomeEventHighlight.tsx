@@ -2,20 +2,16 @@
 
 import Link from "next/link";
 import { useMemo } from "react";
-import { useLocalEvents } from "@/components/useLocalEvents";
 import { defaultEvents, getEventAnchorPath } from "@/lib/events";
 
 export default function HomeEventHighlight() {
-  const { events, isReady } = useLocalEvents();
-  const sourceEvents = isReady ? events : defaultEvents;
-
   const featuredUpcomingEvent = useMemo(() => {
-    const upcomingEvents = sourceEvents.filter(
+    const upcomingEvents = defaultEvents.filter(
       (event) => event.status === "upcoming",
     );
 
     return upcomingEvents.find((event) => event.featured) ?? upcomingEvents[0];
-  }, [sourceEvents]);
+  }, []);
 
   return (
     <div className="flex w-full flex-col gap-4">
@@ -52,8 +48,8 @@ export default function HomeEventHighlight() {
           <div className="mt-5">
             {featuredUpcomingEvent ? (
               <Link
-                href={getEventAnchorPath(featuredUpcomingEvent.id)}
-                className="interactive-button inline-flex items-center justify-center rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-5 py-3 text-xs font-bold uppercase tracking-[1.2px] text-white"
+                href={getEventAnchorPath(featuredUpcomingEvent.slug)}
+                className="interactive-button inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-5 py-3 text-xs font-bold uppercase tracking-[1.2px] text-white"
               >
                 Sign Up Now
               </Link>

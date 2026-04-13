@@ -1,0 +1,68 @@
+insert into public.events (
+  id,
+  slug,
+  title,
+  description,
+  event_type,
+  organizer_name,
+  event_datetime,
+  date_label,
+  time_label,
+  location_text,
+  google_maps_value,
+  capacity_label,
+  capacity_status,
+  image_url,
+  is_featured
+)
+values
+  (
+    'f6be8766-bba8-4dc5-b88c-2410ee4f2a2d',
+    'ai-agent-workshop',
+    'Building my own AI Agent',
+    'A practical session on building a personal AI agent from scratch, wiring in high-leverage workflows, and turning it into something you can actually use during the semester.',
+    'Workshop',
+    'Chevo',
+    '2026-06-01T18:00:00+02:00',
+    'June 1',
+    '18:00 - 20:00',
+    'Snape LT1',
+    'Snape LT1 UCT Cape Town',
+    '40 seats',
+    'high',
+    'https://api.builder.io/api/v1/image/assets/TEMP/001baf8a787375c9a0faa49d89b6dab5fbf00d29?width=808',
+    true
+  ),
+  (
+    '70f55957-7be4-4805-bf4c-0e22447e0dbc',
+    'coffee-chat',
+    'Coffee Chat',
+    'Meet the collective, see what others are building, and get a low-pressure entry point into the community before the first big build cycle starts.',
+    'Social',
+    'Chevo',
+    '2026-04-25T17:30:00+02:00',
+    'April 25',
+    '17:30 - 19:00',
+    'Plato Coffee',
+    'Plato Coffee UCT Cape Town',
+    'Open drop-in',
+    'high',
+    'https://api.builder.io/api/v1/image/assets/TEMP/64f08e712d880e32d99d5531dfb0fa0273ba0cf6?width=640',
+    false
+  )
+on conflict (slug) do update
+set
+  title = excluded.title,
+  description = excluded.description,
+  event_type = excluded.event_type,
+  organizer_name = excluded.organizer_name,
+  event_datetime = excluded.event_datetime,
+  date_label = excluded.date_label,
+  time_label = excluded.time_label,
+  location_text = excluded.location_text,
+  google_maps_value = excluded.google_maps_value,
+  capacity_label = excluded.capacity_label,
+  capacity_status = excluded.capacity_status,
+  image_url = excluded.image_url,
+  is_featured = excluded.is_featured,
+  updated_at = now();

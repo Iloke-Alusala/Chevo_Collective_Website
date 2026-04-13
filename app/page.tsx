@@ -28,13 +28,16 @@ export default function HomePage() {
               <div className="flex flex-wrap items-center gap-6 pt-2">
                 <Link
                   href="/events"
-                  className="interactive-button inline-flex items-center justify-center rounded-md bg-gradient-to-r from-chevo-red to-chevo-orange px-10 py-4 text-sm font-bold uppercase tracking-[1.4px] text-white shadow-[0_18px_40px_-24px_rgba(177,44,25,0.85)]"
+                  className="interactive-button inline-flex items-center justify-center rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-6 py-3 text-sm font-bold uppercase tracking-[1.2px] text-white shadow-[0_16px_32px_-18px_rgba(177,44,25,0.75)]"
                 >
                   Upcoming Events
                 </Link>
-                <div className="glass-inset rounded-full px-5 py-3 text-xs font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
-                  About page coming soon
-                </div>
+                <Link
+                  href="/about"
+                  className="glass-button interactive-button inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-bold uppercase tracking-[1.2px] text-chevo-dark"
+                >
+                  About Us
+                </Link>
               </div>
             </div>
           </div>

@@ -1,11 +1,20 @@
 import type { Metadata } from "next";
 import EventSignupPage from "@/components/EventSignupPage";
+import { defaultEvents } from "@/lib/events";
 
 export const metadata: Metadata = {
   title: "Event RSVP | Chevo Collective",
   description:
-    "Event details and local RSVP flow for Chevo Collective workshops, socials, and build sessions.",
+    "Event details and RSVP flow for Chevo Collective workshops, socials, and build sessions.",
 };
+
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return defaultEvents.map((event) => ({
+    eventId: event.slug,
+  }));
+}
 
 type EventDetailRouteProps = {
   params: Promise<{
@@ -18,5 +27,5 @@ export default async function EventDetailRoute({
 }: EventDetailRouteProps) {
   const { eventId } = await params;
 
-  return <EventSignupPage eventId={eventId} />;
+  return <EventSignupPage eventSlug={eventId} />;
 }

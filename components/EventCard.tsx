@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import SmartImage from "@/components/SmartImage";
 import {
@@ -10,6 +13,7 @@ type EventCardProps = {
   event: EventItem;
   variant?: "featured" | "standard";
   className?: string;
+  disableCta?: boolean;
 };
 
 function ArrowIcon() {
@@ -27,7 +31,10 @@ export default function EventCard({
   event,
   variant = "standard",
   className = "",
+  disableCta = false,
 }: EventCardProps) {
+  const cardRef = useRef<HTMLElement | null>(null);
+  const [hasExpandedTags, setHasExpandedTags] = useState(false);
   const isFeatured = variant === "featured";
   const locationHref = getGoogleMapsHref(event.locationMapValue);
   const tagItems = [
@@ -42,9 +49,42 @@ export default function EventCard({
     { label: "Location", value: event.location, href: locationHref },
   ].filter((item) => item.value);
 
+  useEffect(() => {
+    const node = cardRef.current;
+
+    if (!node || hasExpandedTags || typeof window === "undefined") {
+      return;
+    }
+
+    if (!("IntersectionObserver" in window)) {
+      setHasExpandedTags(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) {
+          return;
+        }
+
+        setHasExpandedTags(true);
+        observer.disconnect();
+      },
+      {
+        threshold: 0.26,
+        rootMargin: "0px 0px -10% 0px",
+      },
+    );
+
+    observer.observe(node);
+
+    return () => observer.disconnect();
+  }, [hasExpandedTags]);
+
   return (
     <article
-      id={event.id}
+      ref={cardRef}
+      id={event.slug}
       className={`glass-panel interactive-surface scroll-mt-28 overflow-hidden rounded-[28px] ${className} ${
         isFeatured
           ? "border-chevo-orange/15 bg-[linear-gradient(135deg,rgba(255,245,238,0.94),rgba(255,255,255,0.82))] shadow-[0_22px_40px_rgba(255,99,74,0.08)]"
@@ -65,7 +105,11 @@ export default function EventCard({
         </div>
 
         <div className="grid border-t border-white/55 p-6 md:grid-cols-2 md:gap-x-3 md:border-t-0 md:border-l md:border-white/55 md:p-7 lg:p-8">
-          <div className="event-chip-fan md:col-span-2">
+          <div
+            className={`event-chip-fan md:col-span-2 ${
+              hasExpandedTags ? "is-expanded" : ""
+            }`}
+          >
             {tagItems.map((item) => (
               <span
                 key={`${event.id}-${item.label}`}
@@ -99,11 +143,12 @@ export default function EventCard({
             </div>
           </div>
 
-          {metaItems.length
-            ? metaItems.map((item) => (
+          {metaItems.length ? (
+            <div className="mt-4 grid grid-cols-2 gap-3 md:col-span-2">
+              {metaItems.map((item) => (
                 <div
                   key={item.label}
-                  className="glass-inset mt-3 min-h-[94px] rounded-2xl px-4 py-4 md:mt-4"
+                  className="glass-inset min-h-[94px] rounded-2xl px-4 py-4"
                 >
                   <p className="text-[10px] font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
                     {item.label}
@@ -125,17 +170,30 @@ export default function EventCard({
                     ) : null}
                   </div>
                 </div>
-              ))
-            : null}
+              ))}
+            </div>
+          ) : null}
 
           <div className="mt-5 flex justify-center border-t border-white/60 pt-5 md:col-span-2 md:mt-6">
-            <Link
-              href={getEventPagePath(event.id)}
-              className="interactive-button inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-6 py-3 text-sm font-black uppercase tracking-[1.2px] text-white shadow-[0_16px_32px_-18px_rgba(177,44,25,0.75)]"
-            >
-              {event.ctaLabel}
-              <ArrowIcon />
-            </Link>
+            {disableCta ? (
+              <button
+                type="button"
+                disabled
+                aria-disabled="true"
+                className="inline-flex cursor-default items-center justify-center gap-2 rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-6 py-3 text-sm font-black uppercase tracking-[1.2px] text-white opacity-90 shadow-[0_16px_32px_-18px_rgba(177,44,25,0.75)]"
+              >
+                {event.ctaLabel}
+                <ArrowIcon />
+              </button>
+            ) : (
+              <Link
+                href={getEventPagePath(event.slug)}
+                className="interactive-button inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-6 py-3 text-sm font-black uppercase tracking-[1.2px] text-white shadow-[0_16px_32px_-18px_rgba(177,44,25,0.75)]"
+              >
+                {event.ctaLabel}
+                <ArrowIcon />
+              </Link>
+            )}
           </div>
         </div>
       </div>
