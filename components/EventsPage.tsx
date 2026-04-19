@@ -95,7 +95,7 @@ export default function EventsPage() {
 
   return (
     <div className="min-h-screen bg-chevo-bg font-grotesk">
-      <section className="mx-auto max-w-[1280px] px-6 pt-16 pb-8 lg:px-8">
+      <section className="mx-auto max-w-[1280px] px-6 pt-16 pb-4 lg:px-8">
         <div className="grid grid-cols-1 items-end gap-12 lg:grid-cols-12">
           <div
             className="motion-panel-enter lg:col-span-7"
@@ -138,12 +138,12 @@ export default function EventsPage() {
 
       <div className="mx-auto max-w-[1280px] px-6 lg:px-8">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="glass-inset inline-flex w-full rounded-full p-1.5 lg:w-auto">
+          <div className="glass-inset inline-flex w-full rounded-full p-1 lg:w-auto">
             <button
               type="button"
               aria-pressed={activeTab === "upcoming"}
               onClick={() => setActiveTab("upcoming")}
-              className={`interactive-button flex-1 rounded-full px-5 py-2.5 text-sm font-bold uppercase tracking-[1.4px] lg:flex-none ${
+              className={`interactive-button flex-1 rounded-full px-4 py-1.5 text-[11px] font-bold uppercase tracking-[1.4px] lg:flex-none ${
                 activeTab === "upcoming"
                   ? "bg-gradient-to-r from-chevo-red to-chevo-orange text-white shadow-[0_10px_18px_rgba(177,44,25,0.16)]"
                   : "text-chevo-text-muted hover:text-chevo-dark"
@@ -155,7 +155,7 @@ export default function EventsPage() {
               type="button"
               aria-pressed={activeTab === "past"}
               onClick={() => setActiveTab("past")}
-              className={`interactive-button flex-1 rounded-full px-5 py-2.5 text-sm font-bold uppercase tracking-[1.4px] lg:flex-none ${
+              className={`interactive-button flex-1 rounded-full px-4 py-1.5 text-[11px] font-bold uppercase tracking-[1.4px] lg:flex-none ${
                 activeTab === "past"
                   ? "bg-gradient-to-r from-chevo-red to-chevo-orange text-white shadow-[0_10px_18px_rgba(177,44,25,0.16)]"
                   : "text-chevo-text-muted hover:text-chevo-dark"
@@ -165,66 +165,61 @@ export default function EventsPage() {
             </button>
           </div>
 
-          <div className="flex w-full flex-col gap-2 lg:w-auto lg:items-end">
-            <span className="text-[11px] font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
-              Filter by tag
-            </span>
-            <div ref={tagMenuRef} className="relative w-full sm:min-w-[220px]">
-              <button
-                type="button"
-                aria-expanded={isTagMenuOpen}
-                aria-haspopup="listbox"
-                aria-label="Filter events by tag"
-                onClick={() => setIsTagMenuOpen((current) => !current)}
-                className="glass-button interactive-button flex w-full items-center justify-between gap-4 rounded-[22px] px-4 py-3 text-left"
+          <div ref={tagMenuRef} className="relative w-full sm:w-auto sm:min-w-[160px]">
+            <button
+              type="button"
+              aria-expanded={isTagMenuOpen}
+              aria-haspopup="listbox"
+              aria-label="Filter events by tag"
+              onClick={() => setIsTagMenuOpen((current) => !current)}
+              className="glass-inset interactive-button flex w-full items-center justify-between gap-3 rounded-full px-4 py-1 text-left"
+            >
+              <span className="text-[11px] font-bold uppercase tracking-[1.4px] text-chevo-dark">
+                {selectedTagLabel}
+              </span>
+              <span
+                className={`pointer-events-none text-[10px] text-chevo-muted-text transition-transform duration-300 ${
+                  isTagMenuOpen ? "rotate-180" : ""
+                }`}
               >
-                <span className="text-sm font-bold uppercase tracking-[1.2px] text-chevo-dark">
-                  {selectedTagLabel}
-                </span>
-                <span
-                  className={`pointer-events-none text-xs text-chevo-muted-text transition-transform duration-300 ${
-                    isTagMenuOpen ? "rotate-180" : ""
-                  }`}
-                >
-                  ▼
-                </span>
-              </button>
+                ▼
+              </span>
+            </button>
 
-              {isTagMenuOpen ? (
-                <div className="glass-dropdown-panel absolute top-[calc(100%+0.75rem)] right-0 z-30 w-full rounded-[24px] p-2">
-                  <ul role="listbox" aria-label="Event tags" className="space-y-1">
-                    {tagOptions.map((option, index) => {
-                      const isActive = option.value === activeTag;
+            {isTagMenuOpen ? (
+              <div className="glass-dropdown-panel absolute top-[calc(100%+0.5rem)] right-0 z-30 w-full rounded-[20px] p-1.5">
+                <ul role="listbox" aria-label="Event tags" className="space-y-0.5">
+                  {tagOptions.map((option, index) => {
+                    const isActive = option.value === activeTag;
 
-                      return (
-                        <li key={option.value}>
-                          <button
-                            type="button"
-                            role="option"
-                            aria-selected={isActive}
-                            style={{ animationDelay: `${index * 48}ms` }}
-                            onClick={() => {
-                              setActiveTag(option.value);
-                              setIsTagMenuOpen(false);
-                            }}
-                            className={`glass-dropdown-option dropdown-ladder-item interactive-button flex w-full items-center justify-between rounded-[18px] px-4 py-3 text-sm font-bold uppercase tracking-[1.15px] ${
-                              isActive
-                                ? "bg-[rgba(255,255,255,0.92)] text-chevo-dark shadow-[0_14px_24px_-20px_rgba(26,28,29,0.3)]"
-                                : "text-chevo-text-muted"
-                            }`}
-                          >
-                            <span>{option.label}</span>
-                            {isActive ? (
-                              <span className="text-chevo-orange">•</span>
-                            ) : null}
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              ) : null}
-            </div>
+                    return (
+                      <li key={option.value}>
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={isActive}
+                          style={{ animationDelay: `${index * 48}ms` }}
+                          onClick={() => {
+                            setActiveTag(option.value);
+                            setIsTagMenuOpen(false);
+                          }}
+                          className={`glass-dropdown-option dropdown-ladder-item interactive-button flex w-full items-center justify-between rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-[1.15px] ${
+                            isActive
+                              ? "bg-[rgba(255,255,255,0.92)] text-chevo-dark shadow-[0_14px_24px_-20px_rgba(26,28,29,0.3)]"
+                              : "text-chevo-text-muted"
+                          }`}
+                        >
+                          <span>{option.label}</span>
+                          {isActive ? (
+                            <span className="text-chevo-orange">•</span>
+                          ) : null}
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>

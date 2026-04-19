@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Reveal from "@/components/Reveal";
 import { aboutIntro, teamMembers } from "@/lib/about";
 
@@ -37,20 +38,14 @@ export default function AboutPage() {
             <div
               className={`glass-panel relative aspect-square overflow-hidden rounded-[30px] bg-gradient-to-br ${member.accentClassName} p-6`}
             >
-              <div className="ambient-orb pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full bg-white/35 blur-[22px]" />
-              <div className="ambient-orb ambient-orb-slow pointer-events-none absolute -bottom-6 -left-6 h-28 w-28 rounded-full bg-chevo-orange/25 blur-[24px]" />
-              <div className="relative flex h-full flex-col justify-between rounded-[24px] border border-white/55 bg-white/38 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]">
-                <span className="glass-chip inline-flex w-fit rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[1.4px] text-chevo-red">
-                  {member.role}
-                </span>
-                <div>
-                  <p className="text-[72px] font-black leading-none tracking-[-4px] text-chevo-dark">
-                    {member.initials}
-                  </p>
-                  <p className="mt-3 text-sm font-semibold uppercase tracking-[1.2px] text-chevo-slate">
-                    {member.name}
-                  </p>
-                </div>
+              <div className="relative flex h-full flex-col justify-between rounded-[24px] bg-white/38 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] overflow-hidden">
+                <Image
+                  src={member.image}
+                  alt={member.name}
+                  fill
+                  className="object-cover object-top"
+                  sizes="260px"
+                />
               </div>
             </div>
 

@@ -171,8 +171,7 @@ const staticEventSeed: Array<
     locationMapValue: "Snape LT1 UCT Cape Town",
     capacityLabel: "40 seats",
     capacityStatus: "high",
-    imageUrl:
-      "https://api.builder.io/api/v1/image/assets/TEMP/001baf8a787375c9a0faa49d89b6dab5fbf00d29?width=808",
+    imageUrl: "/openclaw.jpg",
     featured: true,
   },
   {
@@ -190,8 +189,7 @@ const staticEventSeed: Array<
     locationMapValue: "Plato Coffee UCT Cape Town",
     capacityLabel: "Open drop-in",
     capacityStatus: "high",
-    imageUrl:
-      "https://api.builder.io/api/v1/image/assets/TEMP/64f08e712d880e32d99d5531dfb0fa0273ba0cf6?width=640",
+    imageUrl: "/coffee-chat.jpg",
     featured: false,
   },
 ];

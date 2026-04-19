@@ -105,25 +105,47 @@ export default function EventCard({
         </div>
 
         <div className="grid border-t border-white/55 p-6 md:grid-cols-2 md:gap-x-3 md:border-t-0 md:border-l md:border-white/55 md:p-7 lg:p-8">
-          <div
-            className={`event-chip-fan md:col-span-2 ${
-              hasExpandedTags ? "is-expanded" : ""
-            }`}
-          >
-            {tagItems.map((item) => (
-              <span
-                key={`${event.id}-${item.label}`}
-                className={`event-chip-fan__chip bg-black glass-chip rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[1px] ${
-                  item.tone === "category"
-                    ? "text-[#ff8d85]"
-                    : item.tone === "organizer"
-                      ? "text-chevo-dark"
-                      : "text-chevo-slate"
-                } ${item.tone === "category" ? "font-black" : ""}`}
+          <div className="flex items-start justify-between gap-3 md:col-span-2">
+            <div
+              className={`event-chip-fan ${
+                hasExpandedTags ? "is-expanded" : ""
+              }`}
+            >
+              {tagItems.map((item) => (
+                <span
+                  key={`${event.id}-${item.label}`}
+                  className={`event-chip-fan__chip bg-black glass-chip rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[1px] ${
+                    item.tone === "category"
+                      ? "text-[#ff8d85]"
+                      : item.tone === "organizer"
+                        ? "text-chevo-dark"
+                        : "text-chevo-slate"
+                  } ${item.tone === "category" ? "font-black" : ""}`}
+                >
+                  {item.label}
+                </span>
+              ))}
+            </div>
+
+            {disableCta ? (
+              <button
+                type="button"
+                disabled
+                aria-disabled="true"
+                className="inline-flex shrink-0 cursor-default items-center justify-center gap-2 rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-5 py-2 text-xs font-black uppercase tracking-[1.2px] text-white opacity-90 shadow-[0_16px_32px_-18px_rgba(177,44,25,0.75)]"
               >
-                {item.label}
-              </span>
-            ))}
+                {event.ctaLabel}
+                <ArrowIcon />
+              </button>
+            ) : (
+              <Link
+                href={getEventPagePath(event.slug)}
+                className="interactive-button inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-5 py-2 text-xs font-black uppercase tracking-[1.2px] text-white shadow-[0_16px_32px_-18px_rgba(177,44,25,0.75)]"
+              >
+                {event.ctaLabel}
+                <ArrowIcon />
+              </Link>
+            )}
           </div>
 
           <div className="mt-5 space-y-3 md:col-span-2 md:mt-4">
@@ -148,7 +170,7 @@ export default function EventCard({
               {metaItems.map((item) => (
                 <div
                   key={item.label}
-                  className="glass-inset min-h-[94px] rounded-2xl px-4 py-4"
+                  className="glass-inset min-h-[78px] rounded-2xl px-4 py-3"
                 >
                   <p className="text-[10px] font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
                     {item.label}
@@ -157,44 +179,11 @@ export default function EventCard({
                     <p className="text-base leading-7 font-semibold text-chevo-dark">
                       {item.value}
                     </p>
-                    {item.label === "Location" && item.href ? (
-                      <a
-                        href={item.href}
-                        target="_blank"
-                        rel="noreferrer"
-                        aria-label={`Open ${event.location} in Google Maps`}
-                        className="interactive-link inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-base"
-                      >
-                        📍
-                      </a>
-                    ) : null}
                   </div>
                 </div>
               ))}
             </div>
           ) : null}
-
-          <div className="mt-5 flex justify-center border-t border-white/60 pt-5 md:col-span-2 md:mt-6">
-            {disableCta ? (
-              <button
-                type="button"
-                disabled
-                aria-disabled="true"
-                className="inline-flex cursor-default items-center justify-center gap-2 rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-6 py-3 text-sm font-black uppercase tracking-[1.2px] text-white opacity-90 shadow-[0_16px_32px_-18px_rgba(177,44,25,0.75)]"
-              >
-                {event.ctaLabel}
-                <ArrowIcon />
-              </button>
-            ) : (
-              <Link
-                href={getEventPagePath(event.slug)}
-                className="interactive-button inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-6 py-3 text-sm font-black uppercase tracking-[1.2px] text-white shadow-[0_16px_32px_-18px_rgba(177,44,25,0.75)]"
-              >
-                {event.ctaLabel}
-                <ArrowIcon />
-              </Link>
-            )}
-          </div>
         </div>
       </div>
     </article>

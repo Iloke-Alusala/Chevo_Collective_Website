@@ -2,6 +2,7 @@ export type TeamMember = {
   name: string;
   role: string;
   initials: string;
+  image: string;
   summary: string;
   accentClassName: string;
 };
@@ -14,8 +15,9 @@ export const teamMembers: TeamMember[] = [
     name: "Iloke",
     role: "Founder",
     initials: "IL",
+    image: "/iloke-portrait.png",
     summary:
-      "Iloke started Chevo Collective to create the kind of student space he wanted to be part of: practical, fast-moving, and deeply builder-oriented. He sets the direction for the community and keeps the mission focused on real engineering momentum.",
+      "Iloke started Chevo Collective to create the kind of student space he wanted to be part of: practical, fast-moving, and deeply builder-oriented. He sets the direction for the community and keeps the mission focused on real engineering momentum.", // TODO: replace
     accentClassName:
       "from-[rgba(255,99,74,0.22)] via-[rgba(255,168,102,0.16)] to-[rgba(255,255,255,0.18)]",
   },
@@ -23,8 +25,9 @@ export const teamMembers: TeamMember[] = [
     name: "Lula",
     role: "Executive",
     initials: "LU",
+    image: "/lulama-portrait.png",
     summary:
-      "Lula helps translate the vision into something students can actually feel when they show up. From shaping the community experience to keeping execution steady, Lula helps Chevo stay warm, welcoming, and well-run.",
+      "Hi, I’m Lula! I’m an Electrical & Computer Engineering student who loves exploring the space where engineering and creativity can mix. I want to do more projects in game development, computer vision, and immersive VR/AR experiences. I like building things, learning with others, and turning small ideas into something meaningful. Chevo is a space where I get to do exactly that with other great people.",
     accentClassName:
       "from-[rgba(255,180,110,0.2)] via-[rgba(255,255,255,0.2)] to-[rgba(244,114,182,0.12)]",
   },
@@ -32,8 +35,9 @@ export const teamMembers: TeamMember[] = [
     name: "Raf",
     role: "Executive",
     initials: "RF",
+    image: "/raf-portrait.png",
     summary:
-      "Raf supports the collective on the execution side, helping turn ideas into sessions, structure, and follow-through. He helps keep the team grounded in practical delivery while the platform grows.",
+      "Raf supports the collective on the execution side, helping turn ideas into sessions, structure, and follow-through. He helps keep the team grounded in practical delivery while the platform grows.", // TODO: replace 
     accentClassName:
       "from-[rgba(125,211,252,0.16)] via-[rgba(255,255,255,0.2)] to-[rgba(255,99,74,0.14)]",
   },
