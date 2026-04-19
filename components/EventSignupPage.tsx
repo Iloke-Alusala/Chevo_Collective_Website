@@ -58,7 +58,7 @@ export default function EventSignupPage({ eventSlug }: EventSignupPageProps) {
   const capacityBadgeLabel =
     event?.capacityStatus === "medium" ? "Medium Capacity" : "High Capacity";
   const backButtonClassName =
-    "glass-button interactive-button inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-bold uppercase tracking-[1.3px] text-chevo-dark";
+    "glass-button interactive-button inline-flex items-center gap-2 justify-center rounded-full px-6 py-3 text-sm font-bold uppercase tracking-[1.3px] text-chevo-dark";
   const rsvpInsetClassName =
     "rounded-2xl border border-[rgba(226,232,240,0.92)] bg-[rgba(242,245,249,0.94)] shadow-[inset_10px_10px_18px_rgba(211,217,227,0.34),inset_-8px_-8px_16px_rgba(255,255,255,0.96),0_18px_28px_-26px_rgba(71,85,105,0.32)]";
 
@@ -188,6 +188,9 @@ export default function EventSignupPage({ eventSlug }: EventSignupPageProps) {
             </p>
             <div className="mt-8">
               <Link href="/events" className={backButtonClassName}>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
                 Back to Events
               </Link>
             </div>
@@ -228,7 +231,7 @@ export default function EventSignupPage({ eventSlug }: EventSignupPageProps) {
               </p>
 
               <div className="grid grid-cols-2 gap-3">
-                <div className={`${rsvpInsetClassName} px-5 py-4`}>
+                <div className={`${rsvpInsetClassName} px-5 py-3`}>
                   <p className="text-[10px] font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
                     Date
                   </p>
@@ -236,7 +239,7 @@ export default function EventSignupPage({ eventSlug }: EventSignupPageProps) {
                     {event.dateLabel}
                   </p>
                 </div>
-                <div className={`${rsvpInsetClassName} px-5 py-4`}>
+                <div className={`${rsvpInsetClassName} px-5 py-3`}>
                   <p className="text-[10px] font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
                     Time
                   </p>
@@ -244,7 +247,7 @@ export default function EventSignupPage({ eventSlug }: EventSignupPageProps) {
                     {event.timeLabel}
                   </p>
                 </div>
-                <div className={`${rsvpInsetClassName} px-5 py-4`}>
+                <div className={`${rsvpInsetClassName} px-5 py-3`}>
                   <p className="text-[10px] font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
                     Capacity
                   </p>
@@ -252,7 +255,7 @@ export default function EventSignupPage({ eventSlug }: EventSignupPageProps) {
                     {event.capacityLabel}
                   </p>
                 </div>
-                <div className={`${rsvpInsetClassName} px-5 py-4`}>
+                <div className={`${rsvpInsetClassName} px-5 py-3`}>
                   <p className="text-[10px] font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
                     Location
                   </p>
@@ -266,9 +269,11 @@ export default function EventSignupPage({ eventSlug }: EventSignupPageProps) {
                         target="_blank"
                         rel="noreferrer"
                         aria-label={`Open ${event.location} in Google Maps`}
-                        className="interactive-link inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/85 text-lg"
+                        className="interactive-link inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/85 text-chevo-muted-text"
                       >
-                        📍
+                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+                          <path d="M7.5 1C5.015 1 3 3.015 3 5.5c0 3.375 4.5 8.5 4.5 8.5S12 8.875 12 5.5C12 3.015 9.985 1 7.5 1Zm0 6.25a1.75 1.75 0 1 1 0-3.5 1.75 1.75 0 0 1 0 3.5Z" fill="currentColor"/>
+                        </svg>
                       </a>
                     ) : null}
                   </div>

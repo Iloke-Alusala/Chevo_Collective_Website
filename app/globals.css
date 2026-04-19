@@ -119,11 +119,17 @@ button:focus-visible {
 }
 
 .glass-input {
-  background: rgba(250, 251, 253, 0.88);
-  border: 1px solid rgba(255, 255, 255, 0.74);
-  box-shadow:
-    inset 8px 8px 16px rgba(220, 225, 233, 0.2),
-    inset -6px -6px 14px rgba(255, 255, 255, 0.92);
+  background: #ffffff;
+  border: 1px solid rgba(203, 213, 225, 0.85);
+  box-shadow: none;
+  transition:
+    border-color 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.glass-input:focus {
+  border-color: rgba(100, 116, 139, 0.55);
+  box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.1);
 }
 
 .glass-button {
@@ -138,8 +144,8 @@ button:focus-visible {
 }
 
 .glass-dropdown-panel {
-  background: rgba(255, 255, 255, 0.78);
-  border: 1px solid rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.92);
   box-shadow:
     18px 18px 36px rgba(209, 214, 224, 0.24),
     -10px -10px 22px rgba(255, 255, 255, 0.92),
