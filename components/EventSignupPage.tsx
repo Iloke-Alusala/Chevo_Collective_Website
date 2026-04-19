@@ -230,7 +230,7 @@ export default function EventSignupPage({ eventSlug }: EventSignupPageProps) {
                 {event.description}
               </p>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div className={`${rsvpInsetClassName} px-5 py-3`}>
                   <p className="text-[10px] font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
                     Date

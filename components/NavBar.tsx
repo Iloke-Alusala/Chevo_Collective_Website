@@ -129,7 +129,7 @@ export default function Navbar() {
       <div
         id={mobileMenuId}
         aria-hidden={!mobileOpen}
-        className={`glass-panel fixed top-16 bottom-0 left-0 z-50 w-[min(82vw,20rem)] border-r border-white/65 bg-white/78 px-6 py-6 transition-[transform,opacity] duration-[420ms] ease-[var(--ease-emphasized)] md:hidden ${
+        className={`glass-panel fixed top-16 bottom-0 left-0 z-50 w-[min(60vw,16rem)] border-r border-white/65 bg-white/78 px-6 py-6 transition-[transform,opacity] duration-[420ms] ease-[var(--ease-emphasized)] md:hidden ${
           mobileOpen
             ? "translate-x-0 opacity-100"
             : "pointer-events-none -translate-x-full opacity-0"

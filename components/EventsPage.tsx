@@ -102,7 +102,7 @@ export default function EventsPage() {
             style={{ animationDelay: "40ms" }}
           >
             <div className="flex flex-col gap-4 pb-8">
-              <h1 className="text-6xl leading-none font-bold tracking-[-4.8px] sm:text-8xl lg:text-[96px]">
+              <h1 className="text-4xl leading-none font-bold tracking-[-2px] sm:text-6xl sm:tracking-[-3.5px] lg:text-8xl lg:tracking-[-4.8px] xl:text-[96px]">
                 <span className="text-chevo-dark">Chevo</span>
                 <br />
                 <span className="text-chevo-orange">Events</span>
@@ -121,13 +121,13 @@ export default function EventsPage() {
             <div className="relative flex items-end justify-center">
               <div className="ambient-orb pointer-events-none absolute bottom-0 left-0 h-32 w-32 rounded-xl bg-gradient-to-br from-chevo-red to-chevo-orange opacity-30 blur-[32px]" />
               <div className="glass-panel interactive-media relative rotate-2 overflow-hidden rounded-[28px]">
-                <div className="relative aspect-[4/5] max-h-[500px] w-full">
+                <div className="relative aspect-[4/5] max-h-[260px] w-full sm:max-h-[380px] md:max-h-[500px]">
                   <SmartImage
                     src="https://api.builder.io/api/v1/image/assets/TEMP/93fc97193583200a61fd70b8fa239ac5cd8eaf6f?width=934"
                     alt="Creative workshop"
                     priority
                     sizes="(min-width: 1024px) 32vw, 100vw"
-                    className="aspect-[4/5] h-auto max-h-[500px] w-full object-cover"
+                    className="aspect-[4/5] h-auto w-full object-cover"
                   />
                 </div>
               </div>
@@ -267,7 +267,7 @@ export default function EventsPage() {
 
       <section className="mx-auto max-w-[1280px] px-6 pb-20 lg:px-8">
         <Reveal>
-          <div className="relative overflow-hidden rounded-[30px] bg-gradient-to-r from-chevo-red to-chevo-orange px-10 py-16 text-center sm:px-16">
+          <div className="relative overflow-hidden rounded-[30px] bg-gradient-to-r from-chevo-red to-chevo-orange px-6 py-12 text-center sm:px-10 sm:py-14 lg:px-16 lg:py-16">
             <div className="ambient-orb ambient-orb-slow pointer-events-none absolute top-0 right-0 h-64 w-64 translate-x-1/2 -translate-y-1/2 rounded-xl bg-white/10 blur-[32px]" />
 
             <div className="relative flex flex-col items-center gap-6">

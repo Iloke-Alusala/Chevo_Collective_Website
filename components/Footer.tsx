@@ -13,7 +13,7 @@ export default function Footer() {
           </span>
         </div>
 
-        <div className="flex items-center gap-6 sm:gap-8">
+        <div className="flex flex-wrap items-center gap-4 sm:gap-6 lg:gap-8">
           <Link
             href="/about"
             className="interactive-link text-xs uppercase tracking-[1.2px] text-chevo-muted-text hover:text-chevo-dark"

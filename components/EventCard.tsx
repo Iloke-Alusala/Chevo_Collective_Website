@@ -166,7 +166,7 @@ export default function EventCard({
           </div>
 
           {metaItems.length ? (
-            <div className="mt-4 grid grid-cols-2 gap-3 md:col-span-2">
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 md:col-span-2">
               {metaItems.map((item) => (
                 <div
                   key={item.label}

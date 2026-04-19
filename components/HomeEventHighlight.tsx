@@ -32,8 +32,8 @@ export default function HomeEventHighlight() {
         permission.
       </p>
 
-      <div className="grid gap-6 pt-6 sm:grid-cols-2">
-        <div className="glass-inset rounded-[24px] px-5 py-5">
+      <div className="grid grid-cols-2 gap-4 pt-6 sm:gap-6">
+        <div className="glass-inset flex flex-col rounded-[24px] px-5 pt-5 pb-8">
           <p className="text-3xl leading-10 font-bold text-chevo-dark">
             {featuredUpcomingEvent
               ? `FIRST EVENT ${featuredUpcomingEvent.dateLabel.toUpperCase()}`
@@ -45,7 +45,7 @@ export default function HomeEventHighlight() {
               : "Preparing featured event"}
           </p>
 
-          <div className="mt-5">
+          <div className="mt-auto pt-5">
             {featuredUpcomingEvent ? (
               <Link
                 href={getEventAnchorPath(featuredUpcomingEvent.slug)}
@@ -63,7 +63,7 @@ export default function HomeEventHighlight() {
 
         <div className="glass-inset rounded-[24px] px-5 py-5">
           <p className="text-3xl leading-10 font-bold text-chevo-dark">
-            OPEN TO UCT STUDENTS
+            OPEN{" "}<br className="sm:hidden" />TO UCT{" "}<br className="sm:hidden" />STUDENTS
           </p>
           <p className="mt-1 text-[11px] font-bold uppercase tracking-[1.2px] text-chevo-muted-text">
             Across all faculties
