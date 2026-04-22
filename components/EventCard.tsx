@@ -99,7 +99,7 @@ export default function EventCard({
               alt={event.title}
               priority={isFeatured}
               sizes="(min-width: 1280px) 31vw, (min-width: 768px) 33vw, 100vw"
-              className="object-contain transition-transform duration-[640ms] ease-[var(--ease-emphasized)]"
+              className="object-cover transition-transform duration-[640ms] ease-[var(--ease-emphasized)]"
             />
           </div>
         </div>
@@ -132,7 +132,7 @@ export default function EventCard({
                 type="button"
                 disabled
                 aria-disabled="true"
-                className="inline-flex shrink-0 cursor-default items-center justify-center gap-2 rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-5 py-2 text-xs font-black uppercase tracking-[1.2px] text-white opacity-90 shadow-[0_16px_32px_-18px_rgba(177,44,25,0.75)]"
+                className="inline-flex shrink-0 cursor-default items-center justify-center gap-2 rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-6 py-3 sm:py-2.5 text-xs font-black uppercase tracking-[1.2px] text-white opacity-90 shadow-[0_16px_32px_-18px_rgba(177,44,25,0.75)]"
               >
                 {event.ctaLabel}
                 <ArrowIcon />
@@ -140,7 +140,7 @@ export default function EventCard({
             ) : (
               <Link
                 href={getEventPagePath(event.slug)}
-                className="interactive-button inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-5 py-2 text-xs font-black uppercase tracking-[1.2px] text-white shadow-[0_16px_32px_-18px_rgba(177,44,25,0.75)]"
+                className="interactive-button inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-6 py-3 sm:py-2.5 text-xs font-black uppercase tracking-[1.2px] text-white shadow-[0_16px_32px_-18px_rgba(177,44,25,0.75)]"
               >
                 {event.ctaLabel}
                 <ArrowIcon />
@@ -166,11 +166,11 @@ export default function EventCard({
           </div>
 
           {metaItems.length ? (
-            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 md:col-span-2">
+            <div className="mt-4 grid grid-cols-2 gap-3 md:col-span-2">
               {metaItems.map((item) => (
                 <div
                   key={item.label}
-                  className="glass-inset min-h-[78px] rounded-2xl px-4 py-3"
+                  className="glass-inset rounded-2xl px-4 py-2"
                 >
                   <p className="text-[10px] font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
                     {item.label}

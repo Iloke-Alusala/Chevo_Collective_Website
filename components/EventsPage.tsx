@@ -101,8 +101,8 @@ export default function EventsPage() {
             className="motion-panel-enter lg:col-span-7"
             style={{ animationDelay: "40ms" }}
           >
-            <div className="flex flex-col gap-4 pb-8">
-              <h1 className="text-4xl leading-none font-bold tracking-[-2px] sm:text-6xl sm:tracking-[-3.5px] lg:text-8xl lg:tracking-[-4.8px] xl:text-[96px]">
+            <div className="flex flex-col gap-4 pb-0 sm:pb-8">
+              <h1 className="text-5xl leading-none font-bold tracking-[-2px] sm:text-6xl sm:tracking-[-3.5px] lg:text-8xl lg:tracking-[-4.8px] xl:text-[96px]">
                 <span className="text-chevo-dark">Chevo</span>
                 <br />
                 <span className="text-chevo-orange">Events</span>
@@ -121,7 +121,7 @@ export default function EventsPage() {
             <div className="relative flex items-end justify-center">
               <div className="ambient-orb pointer-events-none absolute bottom-0 left-0 h-32 w-32 rounded-xl bg-gradient-to-br from-chevo-red to-chevo-orange opacity-30 blur-[32px]" />
               <div className="glass-panel interactive-media relative rotate-2 overflow-hidden rounded-[28px]">
-                <div className="relative aspect-[4/5] max-h-[260px] w-full sm:max-h-[380px] md:max-h-[500px]">
+                <div className="relative aspect-[4/5] max-h-[200px] w-full sm:max-h-[380px] md:max-h-[500px]">
                   <SmartImage
                     src="https://api.builder.io/api/v1/image/assets/TEMP/93fc97193583200a61fd70b8fa239ac5cd8eaf6f?width=934"
                     alt="Creative workshop"
@@ -259,7 +259,7 @@ export default function EventsPage() {
             </div>
           ) : (
             <div className="glass-panel rounded-[28px] px-8 py-14 text-center text-lg font-medium text-chevo-muted-text">
-              Past event recaps will appear here once the first sessions wrap.
+              Past event recaps will appear here as they wrap up.
             </div>
           )}
         </div>
@@ -267,7 +267,7 @@ export default function EventsPage() {
 
       <section className="mx-auto max-w-[1280px] px-6 pb-20 lg:px-8">
         <Reveal>
-          <div className="relative overflow-hidden rounded-[30px] bg-gradient-to-r from-chevo-red to-chevo-orange px-6 py-12 text-center sm:px-10 sm:py-14 lg:px-16 lg:py-16">
+          <div className="relative overflow-hidden rounded-[30px] bg-gradient-to-r from-chevo-red to-chevo-orange px-6 py-10 text-center sm:px-10 sm:py-12 lg:px-16 lg:py-14">
             <div className="ambient-orb ambient-orb-slow pointer-events-none absolute top-0 right-0 h-64 w-64 translate-x-1/2 -translate-y-1/2 rounded-xl bg-white/10 blur-[32px]" />
 
             <div className="relative flex flex-col items-center gap-6">
@@ -280,7 +280,7 @@ export default function EventsPage() {
               </p>
               <a
                 href="mailto:chevocollective@gmail.com"
-                className="interactive-button inline-flex items-center justify-center rounded-full bg-white px-10 py-4 text-sm font-bold uppercase tracking-[1.4px] text-chevo-red shadow-[0_20px_25px_-5px_rgba(0,0,0,0.10),0_8px_10px_-6px_rgba(0,0,0,0.10)] hover:bg-white/90"
+                className="interactive-button inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-xs font-bold uppercase tracking-[1.6px] text-chevo-red shadow-[0_16px_32px_-18px_rgba(177,44,25,0.75)] hover:brightness-90 sm:px-9 sm:py-3.5 sm:text-sm"
               >
                 Get in Touch
               </a>

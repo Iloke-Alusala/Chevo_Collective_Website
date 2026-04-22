@@ -33,7 +33,7 @@ export default function HomePage() {
               </p>
 
               <div
-                className="motion-panel-enter flex flex-wrap items-center gap-6 pt-2"
+                className="motion-panel-enter flex w-full items-center justify-between gap-3 px-6 pt-2 sm:w-auto sm:justify-start sm:gap-6 sm:px-0"
                 style={{ animationDelay: "200ms" }}
               >
                 <Link
@@ -44,7 +44,7 @@ export default function HomePage() {
                 </Link>
                 <Link
                   href="/about"
-                  className="glass-button interactive-button inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-bold uppercase tracking-[1.2px] text-chevo-dark hover:brightness-105"
+                  className="interactive-button inline-flex items-center justify-center rounded-full bg-neutral-700 px-6 py-3 text-sm font-bold uppercase tracking-[1.2px] text-white shadow-[0_16px_32px_-18px_rgba(0,0,0,0.75)] hover:brightness-110"
                 >
                   About Us
                 </Link>
@@ -145,7 +145,7 @@ export default function HomePage() {
                   href="https://mailchi.mp/82be5e27abf3/chevocollective"
                   target="_blank"
                   rel="noreferrer"
-                  className="interactive-button inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-xs font-bold uppercase tracking-[1.6px] text-chevo-red shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:brightness-105 sm:px-9 sm:py-3.5 sm:text-sm sm:tracking-[2.8px]"
+                  className="interactive-button inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-xs font-bold uppercase tracking-[1.6px] text-chevo-red shadow-[0_16px_32px_-18px_rgba(177,44,25,0.75)] hover:brightness-90 sm:px-9 sm:py-3.5 sm:text-sm sm:tracking-[2.8px]"
                 >
                   Join The Mailing List
                 </a>

@@ -30,7 +30,8 @@
   --ease-snappy: cubic-bezier(0.24, 1.1, 0.32, 1);
   --duration-fast: 160ms;
   --duration-base: 280ms;
-  --duration-slow: 480ms;
+  --duration-slow: 700ms;
+  --duration-blur: 1000ms;
 }
 
 html,
@@ -180,7 +181,7 @@ button:focus-visible {
   transition:
     opacity var(--duration-slow) var(--ease-standard),
     transform var(--duration-slow) var(--ease-emphasized),
-    filter var(--duration-slow) var(--ease-gentle);
+    filter var(--duration-blur) var(--ease-gentle);
   transition-delay: var(--reveal-delay, 0ms);
   will-change: opacity, transform, filter;
 }
@@ -308,6 +309,21 @@ button:focus-visible {
 
 .event-chip-fan.is-expanded .event-chip-fan__chip + .event-chip-fan__chip {
   margin-left: 0.5rem;
+}
+
+@media (max-width: 767px) {
+  .event-chip-fan {
+    gap: 0.5rem;
+  }
+
+  .event-chip-fan .event-chip-fan__chip,
+  .event-chip-fan .event-chip-fan__chip:nth-child(1),
+  .event-chip-fan .event-chip-fan__chip:nth-child(2),
+  .event-chip-fan .event-chip-fan__chip:nth-child(3),
+  .event-chip-fan .event-chip-fan__chip:nth-child(4) {
+    transform: translateX(0) !important;
+    margin-left: 0 !important;
+  }
 }
 
 .ambient-orb {

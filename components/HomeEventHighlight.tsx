@@ -36,7 +36,7 @@ export default function HomeEventHighlight() {
         <div className="glass-inset flex flex-col rounded-[24px] px-5 pt-5 pb-8">
           <p className="text-3xl leading-10 font-bold text-chevo-dark">
             {featuredUpcomingEvent
-              ? `FIRST EVENT ${featuredUpcomingEvent.dateLabel.toUpperCase()}`
+              ? `FIRST EVENT: ${featuredUpcomingEvent.dateLabel.toUpperCase()}`
               : "FIRST EVENT LOADING"}
           </p>
           <p className="mt-1 text-[11px] font-bold uppercase tracking-[1.2px] text-chevo-muted-text">
@@ -49,7 +49,7 @@ export default function HomeEventHighlight() {
             {featuredUpcomingEvent ? (
               <Link
                 href={getEventAnchorPath(featuredUpcomingEvent.slug)}
-                className="interactive-button inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-5 py-3 text-xs font-bold uppercase tracking-[1.2px] text-white"
+                className="interactive-button inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-5 py-3 text-xs font-bold uppercase tracking-[1.2px] text-white shadow-[0_16px_32px_-18px_rgba(177,44,25,0.75)] hover:brightness-110"
               >
                 Sign Up Now
               </Link>
@@ -69,7 +69,7 @@ export default function HomeEventHighlight() {
             Across all faculties
           </p>
           <p className="mt-5 text-sm leading-6 text-chevo-text-muted">
-            Workshops, socials, and build sessions are designed for students
+            Join workshops, socials, and build sessions! For students
             who want practical momentum outside the curriculum.
           </p>
         </div>

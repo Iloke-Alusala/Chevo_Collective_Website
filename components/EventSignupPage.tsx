@@ -205,6 +205,9 @@ export default function EventSignupPage({ eventSlug }: EventSignupPageProps) {
       <section className="mx-auto max-w-[980px] px-6 pt-16 pb-20 lg:px-8">
         <div className="mb-8">
           <Link href="/events" className={backButtonClassName}>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
             Back to Events
           </Link>
         </div>
@@ -220,7 +223,7 @@ export default function EventSignupPage({ eventSlug }: EventSignupPageProps) {
                 </div>
 
                 <div
-                  className={`inline-flex items-center justify-center rounded-[20px] border px-4 py-3 text-sm font-bold uppercase tracking-[1.2px] ${capacityBadgeClasses}`}
+                  className={`self-end inline-flex items-center justify-center rounded-full border px-3 py-1.5 text-[10px] font-bold uppercase tracking-[1.2px] lg:self-auto ${capacityBadgeClasses}`}
                 >
                   {capacityBadgeLabel}
                 </div>
@@ -230,7 +233,7 @@ export default function EventSignupPage({ eventSlug }: EventSignupPageProps) {
                 {event.description}
               </p>
 
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="grid grid-cols-2 gap-3">
                 <div className={`${rsvpInsetClassName} px-5 py-3`}>
                   <p className="text-[10px] font-bold uppercase tracking-[1.3px] text-chevo-muted-text">
                     Date
@@ -332,6 +335,9 @@ export default function EventSignupPage({ eventSlug }: EventSignupPageProps) {
                       Add Another RSVP
                     </button>
                     <Link href="/events" className={backButtonClassName}>
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                        <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
                       Back to Events
                     </Link>
                   </div>
@@ -449,6 +455,7 @@ export default function EventSignupPage({ eventSlug }: EventSignupPageProps) {
                         <span className="mb-2 block text-xs font-bold uppercase tracking-[1.2px] text-chevo-muted-text">
                           Where do you fit in?
                         </span>
+                        <div className="relative">
                         <select
                           name="degreeOption"
                           value={draft.degreeOption}
@@ -456,7 +463,7 @@ export default function EventSignupPage({ eventSlug }: EventSignupPageProps) {
                             handleInputChange("degreeOption", nextEvent)
                           }
                           required
-                          className="glass-input w-full rounded-2xl px-4 py-3 text-sm text-chevo-dark outline-none"
+                          className={`glass-input w-full appearance-none rounded-2xl py-3 pl-4 pr-10 text-sm outline-none ${draft.degreeOption ? "text-chevo-dark" : "text-[#8b98ab]"}`}
                         >
                           <option value="">Select an option</option>
                           {DEGREE_OPTIONS.map((option) => (
@@ -465,6 +472,8 @@ export default function EventSignupPage({ eventSlug }: EventSignupPageProps) {
                             </option>
                           ))}
                         </select>
+                        <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-chevo-muted-text">▼</span>
+                        </div>
                       </label>
 
                       <label className="block sm:col-span-2">
