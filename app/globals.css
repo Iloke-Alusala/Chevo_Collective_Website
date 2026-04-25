@@ -311,6 +311,122 @@ button:focus-visible {
   margin-left: 0.5rem;
 }
 
+.project-pile-card {
+  transition:
+    top 560ms var(--ease-emphasized),
+    right 560ms var(--ease-emphasized),
+    bottom 560ms var(--ease-emphasized),
+    left 560ms var(--ease-emphasized),
+    width 560ms var(--ease-emphasized),
+    transform 620ms var(--ease-emphasized),
+    box-shadow 360ms var(--ease-gentle);
+  will-change: transform, top, left, right, bottom, width;
+}
+
+.project-pile-card--piko {
+  top: -5%;
+  left: -18%;
+  width: 92%;
+  transform: rotate(-11deg);
+  z-index: 5;
+}
+
+.project-pile-card--dronita {
+  top: 2%;
+  right: -14%;
+  width: 58%;
+  transform: rotate(10deg);
+  z-index: 3;
+}
+
+.project-pile-card--ai-pots {
+  top: 43%;
+  left: -13%;
+  width: 56%;
+  transform: rotate(-6deg);
+  z-index: 4;
+}
+
+.project-pile-card--locked-out {
+  right: -20%;
+  bottom: -7%;
+  width: 88%;
+  transform: rotate(8deg);
+  z-index: 2;
+}
+
+.project-pile-card--desk-robot {
+  top: 29%;
+  right: -2%;
+  width: 44%;
+  transform: rotate(5deg);
+  z-index: 6;
+}
+
+@media (min-width: 640px) {
+  .project-pile-card--piko {
+    top: -5%;
+    left: -15%;
+    width: 84%;
+  }
+
+  .project-pile-card--dronita {
+    top: 1%;
+    right: -12%;
+    width: 52%;
+  }
+
+  .project-pile-card--ai-pots {
+    top: 42%;
+    left: -11%;
+    width: 50%;
+  }
+
+  .project-pile-card--locked-out {
+    right: -17%;
+    bottom: -6%;
+    width: 78%;
+  }
+
+  .project-pile-card--desk-robot {
+    top: 28%;
+    right: -1%;
+    width: 38%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .project-pile-card--piko {
+    top: -7%;
+    left: -18%;
+    width: 82%;
+  }
+
+  .project-pile-card--dronita {
+    top: 0%;
+    right: -13%;
+    width: 49%;
+  }
+
+  .project-pile-card--ai-pots {
+    top: 43%;
+    left: -14%;
+    width: 46%;
+  }
+
+  .project-pile-card--locked-out {
+    right: -19%;
+    bottom: -7%;
+    width: 74%;
+  }
+
+  .project-pile-card--desk-robot {
+    top: 27%;
+    right: -2%;
+    width: 35%;
+  }
+}
+
 @media (max-width: 767px) {
   .event-chip-fan {
     gap: 0.5rem;
@@ -382,6 +498,46 @@ button:focus-visible {
   .event-chip-fan:hover .event-chip-fan__chip + .event-chip-fan__chip,
   .event-chip-fan:focus-within .event-chip-fan__chip + .event-chip-fan__chip {
     margin-left: 0.5rem;
+  }
+
+  .project-pile:hover .project-pile-card,
+  .project-pile:focus-within .project-pile-card {
+    box-shadow: 0 28px 54px -30px rgba(26, 28, 29, 0.58);
+  }
+
+  .project-pile:hover .project-pile-card--piko,
+  .project-pile:focus-within .project-pile-card--piko {
+    top: 4%;
+    left: -1%;
+    transform: rotate(-3deg);
+  }
+
+  .project-pile:hover .project-pile-card--dronita,
+  .project-pile:focus-within .project-pile-card--dronita {
+    top: 8%;
+    right: 1%;
+    transform: rotate(3deg);
+  }
+
+  .project-pile:hover .project-pile-card--ai-pots,
+  .project-pile:focus-within .project-pile-card--ai-pots {
+    top: 36%;
+    left: -1%;
+    transform: rotate(-2deg);
+  }
+
+  .project-pile:hover .project-pile-card--locked-out,
+  .project-pile:focus-within .project-pile-card--locked-out {
+    right: -2%;
+    bottom: 1%;
+    transform: rotate(2deg);
+  }
+
+  .project-pile:hover .project-pile-card--desk-robot,
+  .project-pile:focus-within .project-pile-card--desk-robot {
+    top: 24%;
+    right: 3%;
+    transform: rotate(1deg);
   }
 }
 

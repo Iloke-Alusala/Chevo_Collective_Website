@@ -15,26 +15,26 @@ export default function HomeEventHighlight() {
 
   return (
     <div className="flex w-full flex-col gap-4">
-      <span className="text-xs font-bold uppercase tracking-[3.6px] text-chevo-red">
+      <span className="text-[10px] font-bold uppercase tracking-[3px] text-chevo-red sm:text-xs sm:tracking-[3.6px]">
         By Students, For Students
       </span>
 
-      <h2 className="text-4xl leading-tight font-bold tracking-[-1.4px] sm:text-5xl lg:text-[56px] lg:leading-[56px]">
+      <h2 className="text-[2.05rem] leading-tight font-bold tracking-[-1.1px] sm:text-5xl lg:text-[56px] lg:leading-[56px]">
         <span className="text-chevo-dark">&quot;A lab where </span>
         <span className="text-chevo-orange">cooler stuff</span>
         <span className="text-chevo-dark"> actually gets built.&quot;</span>
       </h2>
 
-      <p className="pt-4 text-lg leading-[29px] text-chevo-text-muted">
+      <p className="pt-4 text-[0.96rem] leading-7 text-chevo-text-muted sm:text-lg sm:leading-[29px]">
         We&apos;re UCT students who got tired of waiting for the curriculum to
         catch up. The Chevo Collective is our answer, a hands-on community
-        where you can build an LLM, a drone, or a rover without waiting for
+        where you can build an AI Agent, a drone, or a rover without waiting for
         permission.
       </p>
 
       <div className="grid grid-cols-2 gap-4 pt-6 sm:gap-6">
         <div className="glass-inset flex flex-col rounded-[24px] px-5 pt-5 pb-8">
-          <p className="text-3xl leading-10 font-bold text-chevo-dark">
+          <p className="text-[2.05rem] leading-[2.65rem] font-bold text-chevo-dark sm:text-3xl sm:leading-10">
             {featuredUpcomingEvent
               ? `FIRST EVENT: ${featuredUpcomingEvent.dateLabel.toUpperCase()}`
               : "FIRST EVENT LOADING"}
@@ -62,13 +62,13 @@ export default function HomeEventHighlight() {
         </div>
 
         <div className="glass-inset rounded-[24px] px-5 py-5">
-          <p className="text-3xl leading-10 font-bold text-chevo-dark">
+          <p className="text-[2.05rem] leading-[2.65rem] font-bold text-chevo-dark sm:text-3xl sm:leading-10">
             OPEN{" "}<br className="sm:hidden" />TO UCT{" "}<br className="sm:hidden" />STUDENTS
           </p>
           <p className="mt-1 text-[11px] font-bold uppercase tracking-[1.2px] text-chevo-muted-text">
             Across all faculties
           </p>
-          <p className="mt-5 text-sm leading-6 text-chevo-text-muted">
+          <p className="mt-5 text-[13px] leading-[1.45rem] text-chevo-text-muted sm:text-sm sm:leading-6">
             Join workshops, socials, and build sessions! For students
             who want practical momentum outside the curriculum.
           </p>
