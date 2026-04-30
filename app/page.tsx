@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import HomePageClientEffects from "@/components/HomePageClientEffects";
 import Reveal from "@/components/Reveal";
 import HomeEventHighlight from "@/components/HomeEventHighlight";
 import HomeProjectPile from "@/components/HomeProjectPile";
@@ -53,7 +54,8 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-chevo-bg font-grotesk">
+    <div className="min-h-screen overflow-x-clip bg-chevo-bg font-grotesk">
+      <HomePageClientEffects />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -65,9 +67,9 @@ export default function HomePage() {
 
           {/* Hero — headline + CTA buttons */}
           <div className="lg:col-span-7">
-            <div className="flex flex-col items-start gap-6">
+            <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
               <h1
-                className="motion-panel-enter text-[2.55rem] leading-none font-bold tracking-[-1.7px] text-chevo-dark sm:text-7xl sm:tracking-[-3px] lg:text-[88px] lg:tracking-[-4px]"
+                className="motion-panel-enter max-w-[10.5ch] text-[2.2rem] leading-none font-bold tracking-[-1.4px] text-chevo-dark sm:max-w-none sm:text-7xl sm:tracking-[-3px] lg:text-[88px] lg:tracking-[-4px]"
                 style={{ animationDelay: "40ms" }}
               >
                 Your Missing <span className="text-chevo-red">Semester</span> of
@@ -76,7 +78,7 @@ export default function HomePage() {
               </h1>
 
               <p
-                className="motion-panel-enter max-w-[576px] text-[0.96rem] leading-[1.45] text-chevo-text-muted sm:text-xl"
+                className="motion-panel-enter max-w-[576px] text-[0.82rem] leading-[1.45] text-chevo-text-muted sm:text-xl"
                 style={{ animationDelay: "120ms" }}
               >
                 The curriculum doesn&apos;t teach the skills you need to survive
@@ -85,18 +87,18 @@ export default function HomePage() {
               </p>
 
               <div
-                className="motion-panel-enter flex w-full items-center justify-between gap-3 px-6 pt-2 sm:w-auto sm:justify-start sm:gap-6 sm:px-0"
+                className="motion-panel-enter grid w-full max-w-[28rem] grid-cols-2 gap-3 pt-2 sm:flex sm:w-auto sm:max-w-none sm:justify-start sm:gap-6"
                 style={{ animationDelay: "200ms" }}
               >
                 <Link
                   href="/events"
-                  className="interactive-button inline-flex items-center justify-center rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-6 py-3 text-sm font-bold uppercase tracking-[1.2px] text-white shadow-[0_16px_32px_-18px_rgba(177,44,25,0.75)] hover:brightness-110"
+                  className="interactive-button inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-chevo-red to-chevo-orange px-4 py-3 text-[12px] font-bold uppercase tracking-[1px] text-white shadow-[0_16px_32px_-18px_rgba(177,44,25,0.75)] hover:brightness-110 sm:w-auto sm:px-6 sm:text-sm sm:tracking-[1.2px]"
                 >
                   Upcoming Events
                 </Link>
                 <Link
                   href="/about"
-                  className="interactive-button inline-flex items-center justify-center rounded-full bg-neutral-700 px-6 py-3 text-sm font-bold uppercase tracking-[1.2px] text-white shadow-[0_16px_32px_-18px_rgba(0,0,0,0.75)] hover:brightness-110"
+                  className="interactive-button inline-flex w-full items-center justify-center rounded-full bg-neutral-700 px-4 py-3 text-[12px] font-bold uppercase tracking-[1px] text-white shadow-[0_16px_32px_-18px_rgba(0,0,0,0.75)] hover:brightness-110 sm:w-auto sm:px-6 sm:text-sm sm:tracking-[1.2px]"
                 >
                   About Us
                 </Link>
@@ -111,14 +113,14 @@ export default function HomePage() {
           >
             <div className="relative flex items-center justify-center">
               <div className="ambient-orb pointer-events-none absolute -bottom-6 -left-6 h-48 w-48 rounded-lg bg-chevo-orange opacity-20 blur-[20px]" />
-              <div className="glass-panel interactive-media relative w-full max-w-[460px] overflow-hidden rounded-[28px] shadow-2xl">
-                <div className="relative aspect-[4/3] w-full sm:aspect-[4/5]">
+              <div className="glass-panel interactive-media relative w-full max-w-[26rem] overflow-hidden rounded-[28px] p-2 shadow-2xl sm:max-w-[460px] sm:p-0">
+                <div className="relative aspect-[5/4] w-full overflow-hidden rounded-[22px] sm:aspect-[4/5] sm:rounded-none">
                   <SmartImage
                     src="https://api.builder.io/api/v1/image/assets/TEMP/acbb0d605ff25c0c34ddce8e9e595b2a10299647?width=957"
                     alt="Students building together in a workshop"
                     priority
                     sizes="(min-width: 1024px) 34vw, 90vw"
-                    className="object-cover"
+                    className="object-cover object-center"
                   />
                 </div>
               </div>
@@ -160,12 +162,12 @@ export default function HomePage() {
 
             <div className="relative flex flex-col items-center gap-8">
               <Reveal delay={0}>
-                <h2 className="text-[2.05rem] leading-tight font-bold tracking-[-1.2px] text-white sm:text-5xl sm:tracking-[-2px] lg:text-[60px] lg:leading-[60px] lg:tracking-[-3px]">
+                <h2 className="text-[1.75rem] leading-tight font-bold tracking-[-1px] text-white sm:text-5xl sm:tracking-[-2px] lg:text-[60px] lg:leading-[60px] lg:tracking-[-3px]">
                   Don&apos;t miss what&apos;s coming
                 </h2>
               </Reveal>
               <Reveal delay={100}>
-                <p className="max-w-[672px] text-[0.96rem] leading-6 text-white/80 sm:text-xl">
+                <p className="max-w-[672px] text-[0.82rem] leading-5 text-white/80 sm:text-xl">
                   Sign up to the mailing list and get a sneak peek of what&apos;s
                   in store. Be the first to know about workshops, events, and new
                   projects.
@@ -176,7 +178,7 @@ export default function HomePage() {
                   href="https://mailchi.mp/82be5e27abf3/chevocollective"
                   target="_blank"
                   rel="noreferrer"
-                  className="interactive-button inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-xs font-bold uppercase tracking-[1.6px] text-chevo-red shadow-[0_16px_32px_-18px_rgba(177,44,25,0.75)] hover:brightness-90 sm:px-9 sm:py-3.5 sm:text-sm sm:tracking-[2.8px]"
+                  className="interactive-button inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-[10px] font-bold uppercase tracking-[1.3px] text-chevo-red shadow-[0_16px_32px_-18px_rgba(177,44,25,0.75)] hover:brightness-90 sm:px-9 sm:py-3.5 sm:text-sm sm:tracking-[2.8px]"
                 >
                   Join The Mailing List
                 </a>

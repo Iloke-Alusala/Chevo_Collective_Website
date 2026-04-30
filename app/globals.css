@@ -37,6 +37,7 @@
 html,
 body {
   min-height: 100%;
+  overflow-x: clip;
   scroll-behavior: smooth;
   scroll-padding-top: 6rem;
 }
@@ -323,6 +324,30 @@ button:focus-visible {
   will-change: transform, top, left, right, bottom, width;
 }
 
+.project-pile.is-replaying-out .project-pile-card {
+  transition-duration: 140ms, 140ms, 140ms, 140ms, 140ms, 140ms, 180ms;
+  transition-timing-function:
+    var(--ease-standard),
+    var(--ease-standard),
+    var(--ease-standard),
+    var(--ease-standard),
+    var(--ease-standard),
+    var(--ease-standard),
+    var(--ease-standard);
+}
+
+.project-pile.is-returning-in .project-pile-card {
+  transition-duration: 980ms, 980ms, 980ms, 980ms, 980ms, 980ms, 1040ms;
+  transition-timing-function:
+    var(--ease-gentle),
+    var(--ease-gentle),
+    var(--ease-gentle),
+    var(--ease-gentle),
+    var(--ease-gentle),
+    var(--ease-gentle),
+    var(--ease-gentle);
+}
+
 .project-pile-card--piko {
   top: -5%;
   left: -18%;
@@ -442,6 +467,36 @@ button:focus-visible {
   }
 }
 
+.project-pile.is-settled .project-pile-card--piko {
+  top: 4%;
+  left: -1%;
+  transform: rotate(-3deg);
+}
+
+.project-pile.is-settled .project-pile-card--dronita {
+  top: 8%;
+  right: 1%;
+  transform: rotate(3deg);
+}
+
+.project-pile.is-settled .project-pile-card--ai-pots {
+  top: 36%;
+  left: -1%;
+  transform: rotate(-2deg);
+}
+
+.project-pile.is-settled .project-pile-card--locked-out {
+  right: -2%;
+  bottom: 1%;
+  transform: rotate(2deg);
+}
+
+.project-pile.is-settled .project-pile-card--desk-robot {
+  top: 24%;
+  right: 3%;
+  transform: rotate(1deg);
+}
+
 .ambient-orb {
   animation: orb-float 11.5s var(--ease-emphasized) infinite alternate;
   will-change: transform;
@@ -500,41 +555,40 @@ button:focus-visible {
     margin-left: 0.5rem;
   }
 
-  .project-pile:hover .project-pile-card,
-  .project-pile:focus-within .project-pile-card {
+  .project-pile:hover .project-pile-card {
     box-shadow: 0 28px 54px -30px rgba(26, 28, 29, 0.58);
   }
 
-  .project-pile:hover .project-pile-card--piko,
-  .project-pile:focus-within .project-pile-card--piko {
+  .project-pile.is-settled .project-pile-card--piko,
+  .project-pile:hover .project-pile-card--piko {
     top: 4%;
     left: -1%;
     transform: rotate(-3deg);
   }
 
-  .project-pile:hover .project-pile-card--dronita,
-  .project-pile:focus-within .project-pile-card--dronita {
+  .project-pile.is-settled .project-pile-card--dronita,
+  .project-pile:hover .project-pile-card--dronita {
     top: 8%;
     right: 1%;
     transform: rotate(3deg);
   }
 
-  .project-pile:hover .project-pile-card--ai-pots,
-  .project-pile:focus-within .project-pile-card--ai-pots {
+  .project-pile.is-settled .project-pile-card--ai-pots,
+  .project-pile:hover .project-pile-card--ai-pots {
     top: 36%;
     left: -1%;
     transform: rotate(-2deg);
   }
 
-  .project-pile:hover .project-pile-card--locked-out,
-  .project-pile:focus-within .project-pile-card--locked-out {
+  .project-pile.is-settled .project-pile-card--locked-out,
+  .project-pile:hover .project-pile-card--locked-out {
     right: -2%;
     bottom: 1%;
     transform: rotate(2deg);
   }
 
-  .project-pile:hover .project-pile-card--desk-robot,
-  .project-pile:focus-within .project-pile-card--desk-robot {
+  .project-pile.is-settled .project-pile-card--desk-robot,
+  .project-pile:hover .project-pile-card--desk-robot {
     top: 24%;
     right: 3%;
     transform: rotate(1deg);
