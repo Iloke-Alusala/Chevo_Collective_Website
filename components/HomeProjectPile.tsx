@@ -1,4 +1,11 @@
+"use client";
+
 import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+
+const REPLAY_OUT_DURATION_MS = 140;
+const REPLAY_IN_DURATION_MS = 980;
+const AUTO_SETTLE_DELAY_MS = 140;
 
 const projectCards = [
   {
@@ -59,11 +66,115 @@ const projectCards = [
 ] as const;
 
 export default function HomeProjectPile() {
+  const [isSettled, setIsSettled] = useState(false);
+  const [isReplayingOut, setIsReplayingOut] = useState(false);
+  const [isReturningIn, setIsReturningIn] = useState(false);
+  const pileRef = useRef<HTMLDivElement | null>(null);
+  const autoSettleTimeoutRef = useRef<number | null>(null);
+  const replayOutTimeoutRef = useRef<number | null>(null);
+  const replayInTimeoutRef = useRef<number | null>(null);
+
+  const clearAnimationTimers = () => {
+    if (autoSettleTimeoutRef.current !== null) {
+      window.clearTimeout(autoSettleTimeoutRef.current);
+      autoSettleTimeoutRef.current = null;
+    }
+
+    if (replayOutTimeoutRef.current !== null) {
+      window.clearTimeout(replayOutTimeoutRef.current);
+      replayOutTimeoutRef.current = null;
+    }
+
+    if (replayInTimeoutRef.current !== null) {
+      window.clearTimeout(replayInTimeoutRef.current);
+      replayInTimeoutRef.current = null;
+    }
+  };
+
+  const settleIn = () => {
+    setIsReturningIn(true);
+    setIsReplayingOut(false);
+    setIsSettled(true);
+
+    replayInTimeoutRef.current = window.setTimeout(() => {
+      setIsReturningIn(false);
+      replayInTimeoutRef.current = null;
+    }, REPLAY_IN_DURATION_MS);
+  };
+
+  const replaySettleAnimation = () => {
+    clearAnimationTimers();
+    setIsReturningIn(false);
+    setIsReplayingOut(true);
+    setIsSettled(false);
+
+    replayOutTimeoutRef.current = window.setTimeout(() => {
+      setIsReplayingOut(false);
+      replayOutTimeoutRef.current = null;
+      settleIn();
+    }, REPLAY_OUT_DURATION_MS);
+  };
+
+  useEffect(() => {
+    const node = pileRef.current;
+    if (!node) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          clearAnimationTimers();
+          setIsReplayingOut(false);
+          autoSettleTimeoutRef.current = window.setTimeout(() => {
+            autoSettleTimeoutRef.current = null;
+            settleIn();
+          }, AUTO_SETTLE_DELAY_MS);
+          observer.disconnect();
+        }
+      },
+      {
+        threshold: 0.35,
+        rootMargin: "0px 0px -8% 0px",
+      },
+    );
+
+    observer.observe(node);
+
+    return () => {
+      observer.disconnect();
+      clearAnimationTimers();
+    };
+  }, []);
+
   return (
-    <div className="project-pile relative min-h-[41rem] w-full overflow-visible sm:min-h-[49rem] lg:min-h-[56rem]">
+    <div
+      ref={pileRef}
+      className={`project-pile relative min-h-[41rem] w-full overflow-visible sm:min-h-[49rem] lg:min-h-[56rem] ${
+        isSettled ? "is-settled" : ""
+      } ${isReplayingOut ? "is-replaying-out" : ""} ${
+        isReturningIn ? "is-returning-in" : ""
+      } focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-chevo-red/35`}
+      role="button"
+      tabIndex={0}
+      aria-label="Replay the project card pile animation"
+      onClick={(event) => {
+        if (event.detail > 0) {
+          event.currentTarget.blur();
+        }
+
+        replaySettleAnimation();
+      }}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          replaySettleAnimation();
+        }
+      }}
+    >
       <div className="pointer-events-none absolute inset-0 rounded-[32px] bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.9),rgba(255,255,255,0)_38%),linear-gradient(180deg,rgba(255,255,255,0.82),rgba(245,247,251,0.72))]" />
 
-      <div className="glass-chip pointer-events-none absolute top-4 left-4 z-20 rounded-full px-3.5 py-1.5 text-[9px] font-bold uppercase tracking-[2.1px] text-chevo-red sm:top-5 sm:left-5 sm:text-[10px]">
+      <div className="glass-chip pointer-events-none absolute top-4 left-1/2 z-20 flex w-[34%] min-w-[9rem] -translate-x-1/2 justify-center rounded-full px-4 py-2 text-center text-[9.5px] font-bold uppercase tracking-[2px] text-chevo-red sm:top-5 sm:w-auto sm:min-w-0 sm:px-3.5 sm:py-1.5 sm:text-[10px]">
         Our Builds
       </div>
 
@@ -85,7 +196,7 @@ export default function HomeProjectPile() {
             />
             <div className={`absolute inset-0 ${card.gradientClassName}`} />
             <div className="absolute inset-x-0 bottom-0 p-2.5 sm:p-3.5">
-              <p className="text-[12px] leading-tight font-bold tracking-[-0.2px] text-white sm:text-sm lg:text-base">
+              <p className="text-[10px] leading-tight font-bold tracking-[-0.15px] text-white sm:text-sm lg:text-base">
                 {card.title}
               </p>
             </div>
